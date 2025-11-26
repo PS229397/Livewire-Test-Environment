@@ -8,4 +8,7 @@
     <div>
         {{ $msg }}
     </div>
+    <div>
+        <p>History: {{ implode(', ', $history) }}
+    </div>
 </div>
