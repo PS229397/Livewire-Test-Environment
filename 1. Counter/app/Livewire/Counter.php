@@ -38,8 +38,8 @@ class Counter extends Component
             $this->msg = "Count cant be higher than 10.";
         }
 
-        //calls the arrayshift logic after press
-        $this->arrayShift();
+        //calls the updateHistory logic after press
+        $this->updateHistory();
     }
 
     //function to decrement until $count hits -5
@@ -56,8 +56,8 @@ class Counter extends Component
             $this->msg = "Count cant be lower than -5.";
         }
 
-        //calls the arrayshift logic after press
-        $this->arrayShift();
+        //calls the updateHistory logic after press
+        $this->updateHistory();
     }
 
     //function to reset $count to 0, resets $msg, stores $count in $history
@@ -66,12 +66,12 @@ class Counter extends Component
         $this->count = 0;
         $this->msg = "";
 
-        //calls the arrayshift logic after press
-        $this->arrayShift();
+        //calls the updateHistory logic after press
+        $this->updateHistory();
     }
 
     //function to keep track of the last 5 numbers being displayed
-    public function arrayShift(): void
+    public function updateHistory(): void
     {
         $this->history[] = $this->count;
 
