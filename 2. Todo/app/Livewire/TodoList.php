@@ -1,5 +1,12 @@
 <?php
 
+// ========================== TODO ========================== //
+// find a way to separate todos and dones (prob 2 arrays)
+// extend the remove done function to remove all dones at once
+// add a counter for total todos and dones
+// add an inline edit function
+// ========================================================== //
+
 namespace App\Livewire;
 
 use Livewire\Component;
@@ -15,6 +22,7 @@ class TodoList extends Component
     //global variable list
     public $newTodo = '';
     public $todos = [];
+    public $dones = [];
     public $isDuplicate = false;
     public $errorMessage = null;
 
@@ -66,7 +74,6 @@ class TodoList extends Component
     public function toggleCompleted($index)
     {
         $this->todos[$index]['completed'] = ! $this->todos[$index]['completed'];
-
     }
 
     //function to remove specified item out of the todo list $index gets passed down from button
