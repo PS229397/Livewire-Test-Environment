@@ -23,6 +23,7 @@ class TodoList extends Component
     public $doneCount = 0;
     public $totalCount = 0;
     public $isDuplicate = false;
+    public $isEditing = false;
     public $errorMessage = null;
 
 
@@ -36,6 +37,19 @@ class TodoList extends Component
         //increments the todoCount and totalCount by 1
         $this->todoCount++;
         $this->totalCount++;
+    }
+
+    public function editTodo(){
+        //logic sketch
+        //if button is clicked, set is editing to true
+        //save the indexed number
+        //change the edit btn into save btn
+        //change the li to an input
+        //populate input with the item at index
+        //check on dupes or forbidden characters
+        //on save replace the todo item with new input
+        //give the new item the same index as old
+        //re-index the array
     }
 
     //function that triggers when the newTodo input is updated using an [active watcher (updated+variable name)]

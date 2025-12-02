@@ -12,8 +12,15 @@
     @if ($todo['completed'] == false)
     <li class="mb-2">
         <span>
+            @if ($isEditing === true)
+            <input wire:model.live="editedText" type="text" value="{{ $todo['text'] }}">
+            <button wire:click="saveEdit({{ $index }})">Save</button
+            @endif
+            @if ($isEditing === false)
             {{ $todo['text'] }}
-            <button wire:click="toggleCompleted({{ $index }})" class="ml-2 px-2 py-1 bg-green-500 text-white rounded">Done</button>
+            <button wire:click="editTodo({{ $index }})">Edit</button>
+            <button wire:click="toggleCompleted({{ $index }})">Done</button>
+            @endif
         </span>
     </li>
     @endif
@@ -22,11 +29,11 @@
     <!-- UI for completed tasks -->
     <h2 class="text-xl font-semibold mt-6 mb-2">Done:</h2>
     @foreach($todos as $index => $todo)
-    @if ($todo['completed'] == true)
+    @if ($todo['completed'] === true)
     <li class="mb-2">
         <span style="text-decoration: line-through; font-style: italic; color: green;">
             {{ $todo['text'] }}
-            <button wire:click="removeTodo({{ $index }})" class="ml-2 px-2 py-1 bg-red-500 text-white rounded">Remove</button>
+            <button wire:click="removeTodo({{ $index }})">Remove</button>
         </span>
     </li>
     @endif
