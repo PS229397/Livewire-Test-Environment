@@ -1,5 +1,6 @@
 <div>
     {{-- Knowing others is intelligence; knowing yourself is true wisdom. --}}
+    <!-- UI for new item input -->
     <h1 class="text-2xl font-bold mb-4">New item</h1>
     <input wire:model.live="newTodo" type="text" placeholder="new item">
     <button wire:click="addTodo" @disabled(empty($newTodo) || !empty($errorMessage) || $isDuplicate) class="ml-2 px-4 py-2 bg-blue-500 text-white rounded">Add</button>
