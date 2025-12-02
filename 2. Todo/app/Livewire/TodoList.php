@@ -39,7 +39,7 @@ class TodoList extends Component
         $this->totalCount++;
     }
 
-    public function editTodo(){
+    public function editTodo($index){
         //logic sketch
         //if button is clicked, set is editing to true
         //save the indexed number
@@ -50,6 +50,18 @@ class TodoList extends Component
         //on save replace the todo item with new input
         //give the new item the same index as old
         //re-index the array
+        $this->isEditing = true;
+    }
+
+    public function saveEdit($index){
+        //logic sketch
+        //check for dupes or forbidden characters
+        //if none found, replace the todo item at index with new input
+        //set is editing to false
+    }
+
+    public function cancelEdit(){
+        $this->isEditing = false;
     }
 
     //function that triggers when the newTodo input is updated using an [active watcher (updated+variable name)]

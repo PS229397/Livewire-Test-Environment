@@ -14,7 +14,8 @@
         <span>
             @if ($isEditing === true)
             <input wire:model.live="editedText" type="text" value="{{ $todo['text'] }}">
-            <button wire:click="saveEdit({{ $index }})">Save</button
+            <button wire:click="saveEdit({{ $index }})">Save</button>
+            <button wire:click="cancelEdit">Cancel</button>
             @endif
             @if ($isEditing === false)
             {{ $todo['text'] }}
