@@ -6,22 +6,29 @@
     <h3 style="color: red;">{{ $errorMessage }}</h3>
     <br><br>
 
+    <!-- UI for task to do -->
     <h2 class="text-xl font-semibold mt-6 mb-2">Todo List:</h2>
     @foreach($todos as $index => $todo)
+    @if ($todo['completed'] == false)
     <li class="mb-2">
-        @if ($todo['completed'] == false)
         <span>
             {{ $todo['text'] }}
             <button wire:click="toggleCompleted({{ $index }})" class="ml-2 px-2 py-1 bg-green-500 text-white rounded">Done</button>
         </span>
-        @endif
+    </li>
+    @endif
+    @endforeach
 
-        @if ($todo['completed'] == true)
+    <!-- UI for completed tasks -->
+    <h2 class="text-xl font-semibold mt-6 mb-2">Done:</h2>
+    @foreach($todos as $index => $todo)
+    @if ($todo['completed'] == true)
+    <li class="mb-2">
         <span style="text-decoration: line-through; font-style: italic; color: green;">
             {{ $todo['text'] }}
             <button wire:click="removeTodo({{ $index }})" class="ml-2 px-2 py-1 bg-red-500 text-white rounded">Remove</button>
         </span>
-        @endif
     </li>
+    @endif
     @endforeach
 </div>

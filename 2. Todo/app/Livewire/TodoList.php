@@ -1,7 +1,6 @@
 <?php
 
 // ========================== TODO ========================== //
-// find a way to separate todos and dones (prob 2 arrays)
 // extend the remove done function to remove all dones at once
 // add a counter for total todos and dones
 // add an inline edit function
@@ -22,7 +21,6 @@ class TodoList extends Component
     //global variable list
     public $newTodo = '';
     public $todos = [];
-    public $dones = [];
     public $isDuplicate = false;
     public $errorMessage = null;
 
