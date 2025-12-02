@@ -1,7 +1,6 @@
 <?php
 
 // ========================== TODO ========================== //
-// extend the remove done function to remove all dones at once
 // add an inline edit function
 // ========================================================== //
 
