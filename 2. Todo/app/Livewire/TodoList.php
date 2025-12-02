@@ -2,7 +2,6 @@
 
 // ========================== TODO ========================== //
 // extend the remove done function to remove all dones at once
-// add a counter for total todos and dones
 // add an inline edit function
 // ========================================================== //
 
@@ -21,6 +20,9 @@ class TodoList extends Component
     //global variable list
     public $newTodo = '';
     public $todos = [];
+    public $todoCount = 0;
+    public $doneCount = 0;
+    public $totalCount = 0;
     public $isDuplicate = false;
     public $errorMessage = null;
 
@@ -29,9 +31,12 @@ class TodoList extends Component
     public function addTodo()
     {
         //adds text from the newTodo input into the todos array
-        $this->todos[] = ['text'=> $this->newTodo, 'completed'=>false];
+        $this->todos[] = ['text' => $this->newTodo, 'completed' => false];
         //clears the newTodo input for the next item
         $this->newTodo = '';
+        //increments the todoCount and totalCount by 1
+        $this->todoCount++;
+        $this->totalCount++;
     }
 
     //function that triggers when the newTodo input is updated using an [active watcher (updated+variable name)]
@@ -58,7 +63,8 @@ class TodoList extends Component
     }
 
     //function to check for duplicate items in the todo list
-    public function checkDuplicate($value) {
+    public function checkDuplicate($value)
+    {
         foreach ($this->todos as $todo) {
             //if duplicate is detected, set isDuplicate to true and show user errormessage
             if (strtolower($todo['text']) === strtolower($value)) {
@@ -69,9 +75,15 @@ class TodoList extends Component
         }
     }
 
+    //function to toggle the completed status of the specified item to done in the todo list, $index gets passed down from button
     public function toggleCompleted($index)
     {
+        //toggles the completed status of the specified item at $index in the todos array
         $this->todos[$index]['completed'] = ! $this->todos[$index]['completed'];
+
+        //updates the todoCount and doneCount accordingly
+        $this->todoCount--;
+        $this->doneCount++;
     }
 
     //function to remove specified item out of the todo list $index gets passed down from button
@@ -80,6 +92,25 @@ class TodoList extends Component
         //removes the specified item at $index from the todos array
         unset($this->todos[$index]);
         //makes a duplicate of the array with all remaining items nicely indexed, pushes it to the todos array
+        $this->todos = array_values($this->todos);
+
+        //decrements the doneCount and totalCount by 1
+        $this->doneCount--;
+        $this->totalCount--;
+    }
+
+    //function to remove all done items from the todo list
+    public function removeAllDone()
+    {
+        //loop through todos array and remove all completed items
+        foreach ($this->todos as $index => $todo) {
+            if ($todo['completed'] == true) {
+                unset($this->todos[$index]);
+                $this->doneCount--;
+                $this->totalCount--;
+            }
+        }
+        //reindex the todos array
         $this->todos = array_values($this->todos);
     }
 }

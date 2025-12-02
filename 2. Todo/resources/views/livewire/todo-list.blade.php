@@ -1,11 +1,10 @@
 <div>
-    {{-- Knowing others is intelligence; knowing yourself is true wisdom. --}}
     <!-- UI for new item input -->
     <h1 class="text-2xl font-bold mb-4">New item</h1>
     <input wire:model.live="newTodo" type="text" placeholder="new item">
     <button wire:click="addTodo" @disabled(empty($newTodo) || !empty($errorMessage) || $isDuplicate) class="ml-2 px-4 py-2 bg-blue-500 text-white rounded">Add</button>
+    <p class="mt-2">Total Items: {{ $totalCount }} | To Do: {{ $todoCount }} | Done: {{ $doneCount }}</p>
     <h3 style="color: red;">{{ $errorMessage }}</h3>
-    <br><br>
 
     <!-- UI for task to do -->
     <h2 class="text-xl font-semibold mt-6 mb-2">Todo List:</h2>
@@ -32,4 +31,6 @@
     </li>
     @endif
     @endforeach
+    <br>
+    <button wire:click="removeAllDone" @disabled($doneCount == 0) class="mt-4 px-4 py-2 bg-red-600 text-white rounded">Remove All Done</button>
 </div>
