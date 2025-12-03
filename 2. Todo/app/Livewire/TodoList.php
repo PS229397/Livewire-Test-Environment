@@ -1,7 +1,7 @@
 <?php
 
 //! ========================== TODO ========================== //
-//! refine errorchecking to be a singular function
+//!
 //! ========================================================== //
 
 namespace App\Livewire;
@@ -47,7 +47,7 @@ class TodoList extends Component
     //? function to edit selected todo item
     public function editTodo($index)
     {
-        //makes sure newTodo input is empty when editing
+        //makes sure newTodo input is empty when editing (to avoid confusion)
         $this->newTodo = '';
 
         //if btn is clicked, set editingIndex to current index to trigger input mode
@@ -55,7 +55,7 @@ class TodoList extends Component
         $this->editedText = $this->todos[$index]['text'] ?? '';
     }
 
-    //? function to save the edited todo and restructure the array
+    //? function to save the edited todo
     public function saveEdit($index)
     {
         //if btn is clicked, update the todo item at the specified index with the edited text
@@ -82,7 +82,7 @@ class TodoList extends Component
     //? function that triggers when the newTodo input is updated using an [active watcher (updated+variable name)] passes it to checkforbidden
     public function updatedNewTodo($value)
     {
-        //passes value to forbidden char function
+        //passes updated value from newTodo to forbidden char function
         $this->checkForbiddenChar($value);
 
         //makes sure editing mode is off on input change
@@ -92,6 +92,7 @@ class TodoList extends Component
     //? function that triggers when the editedText input is updated using an [active watcher (updated+variable name)] passes it to checkforbidden
     public function updatedEditedText($value)
     {
+        //passes updated value from editedText to forbidden char function
         $this->checkForbiddenChar($value);
     }
 
@@ -180,6 +181,7 @@ class TodoList extends Component
                 $this->totalCount--;
             }
         }
+
         //reindex the todos array
         $this->todos = array_values($this->todos);
     }

@@ -4,8 +4,11 @@
     <input wire:model.live="newTodo" type="text" placeholder="new item">
     <!-- disable btn if input is empty, any error msgs are diplayed or item is detected as duplicate-->
     <button wire:click="addTodo" @disabled(empty($newTodo) || !empty($errorMessage) || $isDuplicate) class="ml-2 px-4 py-2 bg-blue-500 text-white rounded">Add</button>
+    <!-- displays counter for todo done and total -->
     <p class="mt-2">Total Items: {{ $totalCount }} | To Do: {{ $todoCount }} | Done: {{ $doneCount }}</p>
+    <!-- error handeling visual output -->
     <h3 style="color: red;">{{ $errorMessage }}</h3>
+
 
     <!-- UI for task to do -->
     <h2 class="text-xl font-semibold mt-6 mb-2">Todo List:</h2>
