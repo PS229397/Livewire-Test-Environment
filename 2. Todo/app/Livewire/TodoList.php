@@ -1,8 +1,9 @@
 <?php
 
-// ========================== TODO ========================== //
-// add an inline edit function
-// ========================================================== //
+//! ========================== TODO ========================== //
+//! add an inline edit function
+//! make sure the duplicate check ignores if the item being edited is the same as the original
+//! ========================================================== //
 
 namespace App\Livewire;
 
@@ -10,24 +11,26 @@ use Livewire\Component;
 
 class TodoList extends Component
 {
-    // default livewire render function
+    //? default livewire render function
     public function render()
     {
         return view('livewire.todo-list');
     }
 
-    //global variable list
+    //^global variable list
     public $newTodo = '';
     public $todos = [];
     public $todoCount = 0;
     public $doneCount = 0;
     public $totalCount = 0;
     public $isDuplicate = false;
-    public $isEditing = false;
+    public $editingIndex = null;
+    public $editedText = '';
     public $errorMessage = null;
 
 
-    //function to add an item to the todo list
+
+    //? function to add an item to the todo list
     public function addTodo()
     {
         //adds text from the newTodo input into the todos array
@@ -39,37 +42,50 @@ class TodoList extends Component
         $this->totalCount++;
     }
 
-    public function editTodo($index){
-        //logic sketch
-        //if button is clicked, set is editing to true
-        //save the indexed number
-        //change the edit btn into save btn
-        //change the li to an input
-        //populate input with the item at index
-        //check on dupes or forbidden characters
-        //on save replace the todo item with new input
-        //give the new item the same index as old
-        //re-index the array
-        $this->isEditing = true;
+    //? function to edit selected todo item
+    public function editTodo($index)
+    {
+        //makes sure newTodo input is empty when editing
+        $this->newTodo = '';
+
+        //if btn is clicked, set editingIndex to current index to trigger input mode
+        $this->editingIndex = $index;
+        $this->editedText = $this->todos[$index]['text'] ?? '';
     }
 
-    public function saveEdit($index){
-        //logic sketch
-        //check for dupes or forbidden characters
-        //if none found, replace the todo item at index with new input
-        //set is editing to false
+    //? function to save the edited todo and restructure the array
+    public function saveEdit($index)
+    {
+        //if btn is clicked, update the todo item at the specified index with the edited text
+        if ($this->editingIndex === $index && isset($this->todos[$index])) {
+            $this->todos[$index]['text'] = $this->editedText;
+        }
+
+        //reset checks to default
+        $this->editingIndex = null;
+        $this->editedText = '';
     }
 
-    public function cancelEdit(){
-        $this->isEditing = false;
+    //? function to cancel the edit action and revert to the original value
+    public function cancelEdit()
+    {
+        //if btn is clicked set editingIndex to null to cancel input mode
+        $this->editingIndex = null;
+
+        //reset checks to default
+        $this->isDuplicate = false;
+        $this->errorMessage = null;
     }
 
-    //function that triggers when the newTodo input is updated using an [active watcher (updated+variable name)]
+    //? function that triggers when the newTodo input is updated using an [active watcher (updated+variable name)] checking for forbidden characters
     public function updatedNewTodo($value)
     {
         //reset checks to default
         $this->isDuplicate = false;
         $this->errorMessage = null;
+
+        //makes sure editing mode is off on input change
+        $this->editingIndex = null;
 
         //defines forbidden characters
         $forbiddenCharacters = ['$', '@', '%', '#', '<', '>'];
@@ -87,7 +103,35 @@ class TodoList extends Component
         }
     }
 
-    //function to check for duplicate items in the todo list
+    //? function that triggers when the editedText input is updated using an [active watcher (updated+variable name)] checking for forbidden characters
+    public function updatedEditedText($value)
+    {
+        //reset checks to default
+        $this->isDuplicate = false;
+        $this->errorMessage = null;
+
+        //defines forbidden characters
+        $forbiddenCharacters = ['$', '@', '%', '#', '<', '>'];
+
+        //check for forbidden characters in $value using haystack method
+        foreach ($forbiddenCharacters as $char) {
+            //if forbidden character is detected, show user errormessage and stop further checks
+            if (str_contains($value, $char)) {
+                $this->errorMessage = "your item contains a forbidden character: {$char}";
+                return;
+            }
+
+            //if the edited text is the same as the original, skip duplicate check
+            if ($value === $this->todos[$this->editingIndex]['text']) {
+                return;
+            }
+
+            //if no forbidden character is detected, proceed to duplicate check
+            $this->checkDuplicate($value);
+        }
+    }
+
+    //? function to check for duplicate items in the todo list
     public function checkDuplicate($value)
     {
         foreach ($this->todos as $todo) {
@@ -100,7 +144,7 @@ class TodoList extends Component
         }
     }
 
-    //function to toggle the completed status of the specified item to done in the todo list, $index gets passed down from button
+    //? function to toggle the completed status of the specified item to done in the todo list, $index gets passed down from button
     public function toggleCompleted($index)
     {
         //toggles the completed status of the specified item at $index in the todos array
@@ -111,7 +155,7 @@ class TodoList extends Component
         $this->doneCount++;
     }
 
-    //function to remove specified item out of the todo list $index gets passed down from button
+    //? function to remove specified item out of the todo list $index gets passed down from button
     public function removeTodo($index)
     {
         //removes the specified item at $index from the todos array
@@ -124,7 +168,7 @@ class TodoList extends Component
         $this->totalCount--;
     }
 
-    //function to remove all done items from the todo list
+    //? function to remove all done items from the todo list
     public function removeAllDone()
     {
         //loop through todos array and remove all completed items
