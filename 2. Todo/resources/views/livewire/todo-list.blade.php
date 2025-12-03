@@ -1,7 +1,7 @@
 <div>
     <!-- UI for new item input -->
     <h1 class="text-2xl font-bold mb-4">New item</h1>
-    <input wire:model.live="newTodo" wire:keydown.enter="addTodo" type="text" placeholder="new item"> <!--  fix not respecting checks on enter -->
+    <input wire:model.live="newTodo" type="text" placeholder="new item">
     <!-- disable btn if input is empty, any error msgs are diplayed or item is detected as duplicate-->
     <button wire:click="addTodo" @disabled(empty($newTodo) || !empty($errorMessage) || $isDuplicate) class="ml-2 px-4 py-2 bg-blue-500 text-white rounded">Add</button>
     <p class="mt-2">Total Items: {{ $totalCount }} | To Do: {{ $todoCount }} | Done: {{ $doneCount }}</p>

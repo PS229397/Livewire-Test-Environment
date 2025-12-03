@@ -1,8 +1,8 @@
 <?php
 
 //! ========================== TODO ========================== //
-//! add an inline edit function
-//! make sure the duplicate check ignores if the item being edited is the same as the original
+//! make sure the keydown.enter event respects checks for duplicates and forbidden characters
+//! make sure the keydown.enter event also works for the edit input
 //! ========================================================== //
 
 namespace App\Livewire;
