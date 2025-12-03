@@ -1,7 +1,7 @@
 <?php
 
 //! ========================== TODO ========================== //
-//! make sure checkdupe gets triggerd on remove item to re-check current input against updated list
+//! refine errorchecking to be a singular function
 //! ========================================================== //
 
 namespace App\Livewire;
@@ -18,6 +18,7 @@ class TodoList extends Component
 
     //^global variable list
     public $newTodo = '';
+    public $input = '';
     public $todos = [];
     public $todoCount = 0;
     public $doneCount = 0;
@@ -34,8 +35,10 @@ class TodoList extends Component
     {
         //adds text from the newTodo input into the todos array
         $this->todos[] = ['text' => $this->newTodo, 'completed' => false];
+
         //clears the newTodo input for the next item
         $this->newTodo = '';
+
         //increments the todoCount and totalCount by 1
         $this->todoCount++;
         $this->totalCount++;
@@ -76,35 +79,28 @@ class TodoList extends Component
         $this->errorMessage = null;
     }
 
-    //? function that triggers when the newTodo input is updated using an [active watcher (updated+variable name)] checking for forbidden characters
+    //? function that triggers when the newTodo input is updated using an [active watcher (updated+variable name)] passes it to checkforbidden
     public function updatedNewTodo($value)
     {
-        //reset checks to default
-        $this->isDuplicate = false;
-        $this->errorMessage = null;
+        //passes value to forbidden char function
+        $this->checkForbiddenChar($value);
 
         //makes sure editing mode is off on input change
         $this->editingIndex = null;
-
-        //defines forbidden characters
-        $forbiddenCharacters = ['$', '@', '%', '#', '<', '>'];
-
-        //check for forbidden characters in $value using haystack method
-        foreach ($forbiddenCharacters as $char) {
-            //if forbidden character is detected, show user errormessage and stop further checks
-            if (str_contains($value, $char)) {
-                $this->errorMessage = "your item contains a forbidden character: {$char}";
-                return;
-            }
-
-            //if no forbidden character is detected, proceed to duplicate check
-            $this->checkDuplicate($value);
-        }
     }
 
-    //? function that triggers when the editedText input is updated using an [active watcher (updated+variable name)] checking for forbidden characters
+    //? function that triggers when the editedText input is updated using an [active watcher (updated+variable name)] passes it to checkforbidden
     public function updatedEditedText($value)
     {
+        $this->checkForbiddenChar($value);
+    }
+
+    //? function to check for forbidden characters in add and edit todo inputs
+    public function checkForbiddenChar($value)
+    {
+        //trims the value to combat spaces in front or behind the input
+        $input = trim($value);
+
         //reset checks to default
         $this->isDuplicate = false;
         $this->errorMessage = null;
@@ -115,18 +111,21 @@ class TodoList extends Component
         //check for forbidden characters in $value using haystack method
         foreach ($forbiddenCharacters as $char) {
             //if forbidden character is detected, show user errormessage and stop further checks
-            if (str_contains($value, $char)) {
+            if (str_contains($input, $char)) {
                 $this->errorMessage = "your item contains a forbidden character: {$char}";
                 return;
             }
 
-            //if the edited text is the same as the original, skip duplicate check
-            if ($value === $this->todos[$this->editingIndex]['text']) {
-                return;
+            //patch solution to only allow this if function to run when an editing index is present (nested if statements are bad habits)
+            if ($this->editingIndex !== null) {
+                //if the edited text is the same as the original, skip duplicate check
+                if ($input === $this->todos[$this->editingIndex]['text']) {
+                    return;
+                }
             }
 
             //if no forbidden character is detected, proceed to duplicate check
-            $this->checkDuplicate($value);
+            $this->checkDuplicate($input);
         }
     }
 
