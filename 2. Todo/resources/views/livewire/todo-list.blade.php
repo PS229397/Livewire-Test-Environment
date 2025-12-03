@@ -24,7 +24,7 @@
             <!-- if editingIndex is equal to current index replace completion/edit btns with the edit input and save/cancel btns -->
             @if ($editingIndex === $index)
             <input wire:model.live="editedText" type="text">
-            <button wire:click="saveEdit({{ $index }})">Save</button>
+            <button wire:click="saveEdit({{ $index }})" @disabled(empty($editedText) || !empty($errorMessage) || $isDuplicate === true)>Save</button>
             <button wire:click="cancelEdit">Cancel</button>
             @endif
         </span>
