@@ -1,8 +1,7 @@
 <?php
 
 //! ========================== TODO ========================== //
-//! make sure the keydown.enter event respects checks for duplicates and forbidden characters
-//! make sure the keydown.enter event also works for the edit input
+//! make sure checkdupe gets triggerd on remove item to re-check current input against updated list
 //! ========================================================== //
 
 namespace App\Livewire;
@@ -162,7 +161,10 @@ class TodoList extends Component
         unset($this->todos[$index]);
         //makes a duplicate of the array with all remaining items nicely indexed, pushes it to the todos array
         $this->todos = array_values($this->todos);
-
+        // re-check the current input against the updated list
+        if (!empty($this->newTodo)) {
+            $this->updatedNewTodo($this->newTodo);
+        }
         //decrements the doneCount and totalCount by 1
         $this->doneCount--;
         $this->totalCount--;
