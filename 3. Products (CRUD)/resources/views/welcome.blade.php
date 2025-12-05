@@ -6,12 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>{{ config('app.name', 'Laravel') }}</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-
+    @vite('resources/css/app.css')
+    @livewireStyles
 
 </head>
 
-<body>
+<body class="bg-green-500 text-3xl">
     <div class="bg-red-500 w-full">1</div>
 </body>
 
