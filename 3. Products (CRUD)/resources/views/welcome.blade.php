@@ -8,11 +8,11 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
     @vite('resources/css/app.css')
     @livewireStyles
-
 </head>
 
-<body class="bg-green-500 text-3xl">
-    <div class="bg-red-500 w-full">1</div>
+<body>
+    <livewire:item-manager />
+    @livewireScripts
 </body>
 
 </html>
