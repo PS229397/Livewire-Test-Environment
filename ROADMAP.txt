@@ -75,7 +75,6 @@ Learn:
 - Realtime updates & polling
 - Component optimization
 - Authentication + middleware
-- Optional: Volt
 
 Build ONE full mini-project:
 A) Mini CMS  
