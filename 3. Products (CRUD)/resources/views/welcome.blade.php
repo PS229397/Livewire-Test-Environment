@@ -12,7 +12,7 @@
 </head>
 
 <body>
-    <div class="bg-red-500">1</div>
+    <div class="bg-red-500 w-full">1</div>
 </body>
 
 </html>
