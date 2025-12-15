@@ -37,7 +37,7 @@ class ItemManager extends Component
     //? load items from the database
     public function loadItems()
     {
-        $this->items = Item::all();
+        $this->items = Item::orderBy('created_at', 'desc')->get();
     }
 
 
@@ -47,7 +47,7 @@ class ItemManager extends Component
     {
         $validated = $this->validate(['name' => 'required|string|max:255',
         'description' => 'nullable|string',
-        'price' => 'decimal']);
+        'price' => 'required|numeric']);
 
         Item::create($validated);
         $this->reset(['name', 'description', 'price']);
