@@ -1,24 +1,90 @@
-<div class="mb-6 max-w-64">
+<!-- Add/edit modal -->
+@if ($modal === true)
+<div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    {{-- Item Form --}}
+    <div class="relative rounded-lg p-6 w-full max-w-lg bg-white shadow-lg">
+        {{ $tstMsg }}
+        <!-- switch the h2 between add and edit -->
+        @if ($editingId !== null)
+        <h2 class="text-xl font-semibold mb-2">Edit Existing Item</h2>
+        @else
+        <h2 class="text-xl font-semibold mb-2">Create New Item</h2>
+        @endif
+
+        <!-- switches the form submit action between the add and edit -->
+        <form wire:submit.prevent="{{ $editingId === null ? 'createItem' : 'updateItem' }}" class="space-y-4">
+            <div>
+                @error('name')<span class="text-red-500">{{ $message }}</span>@enderror
+                <label class="block mb-1">Name:</label>
+                <input type="text" wire:model="name" class="p-2 border rounded" />
+            </div>
+            <div>
+                @error('description')<span class="text-red-500">{{ $message }}</span>@enderror
+                <label class="block mb-1">Description:</label>
+                <textarea wire:model="description" class="p-2 border rounded"></textarea>
+            </div>
+            <div>
+                @error('prices')<span class="text-red-500">{{ $message }}</span>@enderror
+                <label class="block mb-1">Price:</label>
+                <input type="number" wire:model="price" class="p-2 border rounded" />
+            </div>
+
+            <button wire:click="switchModal" class="bg-red-500 text-white px-4 py-2 rounded">cancel</button>
+
+            <!-- visually changes submit button from add to edit -->
+            @if ($editingId !== null)
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Update Item</button>
+            @else
+            <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Add Item</button>
+            @endif
+        </form>
+    </div>
+</div>
+@endif
+
+<!-- Table UI -->
+<div class="p-4 fixed inset-0 overflow-auto">
     {{-- If your happiness depends on money, you will never be happy with yourself. --}}
     <h1 class="text-4xl font-bold mb-4">Item Manager</h1>
 
-    {{-- Item Creation Form --}}
-    <div>
-        <h2 class="text-xl font-semibold mb-2">Create New Item</h2>
-        <form wire:submit.prevent="createItem" class="space-y-4">
-            <div>
-                <label class="block mb-1">Name:</label>
-                <input type="text" wire:model="name" class="w-full p-2 border rounded" />
-            </div>
-            <div>
-                <label class="block mb-1">Description:</label>
-                <textarea wire:model="description" class="w-full p-2 border rounded"></textarea>
-            </div>
-            <div>
-                <label class="block mb-1">Price:</label>
-                <input type="number" wire:model="price" class="w-full p-2 border rounded" />
-            </div>
-            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Add Item</button>
-        </form>
+    {{-- Item List --}}
+    <div class="mb-6">
+        <table class="border-collapse">
+            <thead>
+                <tr class="bg-gray-500 text-white">
+                    <th class="border p-2">ID</th>
+                    <th class="border p-2">Name</th>
+                    <th class="border p-2">Description</th>
+                    <th class="border p-2">Price</th>
+                    <th class="border p-2"> <button wire:click="switchModal({{ 'null' }})" class="bg-green-500 text-white px-4 rounded">New item +</button></th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($items as $item)
+                <tr class=" odd:bg-gray-200 even:bg-gray-400">
+                    <td class="border p-2">{{ $item->id }}</td>
+                    <td class="border p-2">{{ $item->name }}</td>
+                    <td class="border p-2">{{ $item->description }}</td>
+                    <td class="border p-2">{{ $item->price }}</td>
+                    <td class="border p-2">
+                        <button wire:click="switchModal({{ $item->id }})"
+                            class="bg-blue-500 text-white font-bold px-2 rounded mr-2">
+                            Edit
+                        </button>
+                        <button wire:click="deleteItem({{ $item->id }})"
+                            class="bg-red-500 text-white font-bold px-2 rounded">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="5" class="border p-2 text-center">
+                        No items yet.
+                    </td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
     </div>
 </div>
