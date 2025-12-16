@@ -30,7 +30,7 @@
                 </div>
 
                 <div class="space-x-2 mt-4 w-full flex justify-end">
-                    <button wire:click="switchModal('')" type="button" class="bg-red-500 text-white px-4 py-2 rounded">cancel</button>
+                    <button wire:click="switchModal('close')" type="button" class="bg-red-500 text-white px-4 py-2 rounded">cancel</button>
                     <!-- visually changes submit button from add to edit -->
                     @if ($editingId !== null)
                     <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Update Item</button>
@@ -43,11 +43,24 @@
     </div>
     @endif
 
+    <!-- Delete Confirmation Modal -->
+    @if ($confirmDelete === true)
+    <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        <div class="relative inset-0 rounded-lg p-6 w-full max-w-lg bg-white shadow-lg">
+            <h2 class="text-xl font-semibold mb-4">Confirm Deletion</h2>
+            <p class="mb-4">Are you sure you want to delete this item?</p>
+            <p class="mb-6 text-red-500 font-bold">This action cannot be undone.</p>
+            <div class="flex justify-end space-x-2">
+                <button wire:click="switchDeleteModal('close')" class="bg-gray-500 text-white px-4 py-2 rounded">Cancel</button>
+                <button wire:click="deleteItem({{ $deletingId }})" class="bg-red-500 text-white px-4 py-2 rounded">Delete</button>
+            </div>
+        </div>
+    </div>
+    @endif
+
     <!-- Table UI -->
     <div class="p-4">
-        {{-- If your happiness depends on money, you will never be happy with yourself. --}}
         <h1 class="text-4xl font-bold mb-4">Item Manager</h1>
-
         {{-- Item List --}}
         <div class="mb-6">
             <table class="border-collapse">
@@ -57,10 +70,10 @@
                         <th class="border p-2">Name</th>
                         <th class="border p-2">Description</th>
                         <th class="border p-2">Price</th>
-                        <th class="border p-2"> <button wire:click="switchModal({{ 'null' }})" class="bg-green-500 text-white px-4 rounded">New item +</button></th>
+                        <th class="border p-2"> <button wire:click="switchModal('open')" type="button" class="bg-green-500 text-white px-4 rounded">New item +</button></th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="overflow-y-scroll">
                     @forelse ($items as $item)
                     <tr class=" odd:bg-gray-200 even:bg-gray-400">
                         <td class="border p-2">{{ $item->id }}</td>
@@ -72,7 +85,7 @@
                                 class="bg-blue-500 text-white font-bold px-2 rounded mr-2">
                                 Edit
                             </button>
-                            <button wire:click="deleteItem({{ $item->id }})"
+                            <button wire:click="switchDeleteModal({{ $item->id }})"
                                 class="bg-red-500 text-white font-bold px-2 rounded">
                                 Delete
                             </button>
