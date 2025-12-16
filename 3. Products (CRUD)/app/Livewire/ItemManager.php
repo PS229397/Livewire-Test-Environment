@@ -11,7 +11,21 @@ use function Laravel\Prompts\error;
 
 class ItemManager extends Component
 {
-    //^component properties
+    //=====================/TODO/=====================//
+    //-add success messages on create, update, delete
+    //-disable buttons while processing
+    //-loading spinners
+    //-autofocus on modals
+    //-close modal on outside click and ESC key
+    //-update confirmation on edit
+    //-pagination for item list
+    //-search/filter for item list
+    //-sort for item list
+    //-centeralize validation rules
+    //-refine modal management logic
+    //================================================//
+
+    //^ component properties
     public $items = [];
     public $name;
     public $description;
@@ -21,7 +35,6 @@ class ItemManager extends Component
     public $deletingId = null;
     public $confirmDelete = null;
     public $tstMsg = '';
-
 
     //^ initialization logic
     //? initialize component state
@@ -56,7 +69,7 @@ class ItemManager extends Component
             $this->editItem($value);
         }
 
-        //if not numeric reset inputs and error bag
+        //if not numeric reset inputs and errors
         else {
             $this->editingId = null;
             $this->reset(['name', 'description', 'price']);
