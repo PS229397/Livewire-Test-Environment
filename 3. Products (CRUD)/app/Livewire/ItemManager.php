@@ -24,13 +24,13 @@ class ItemManager extends Component
     //*-validate before confirm modal on edit
     //!-loading spinners
     //!-disable buttons while processing
-    //!-add success messages on create, update, delete
+    //^-add success messages on create, update, delete
     //!-pagination for item list
     //!-search/filter for item list
     //!-sort for item list
     //~===============================================================================================~//
 
-    //^ component properties ======================================================================== ^//
+    //^ Component properties ======================================================================== ^//
     public $items = [];
     public $name;
     public $description;
@@ -41,7 +41,7 @@ class ItemManager extends Component
     public $succesMsg = '';
     public $tstMsg = '';
 
-    //^ initialization logic ======================================================================== ^//
+    //^ Initialization logic ======================================================================== ^//
     //? initialize component state
     public function mount()
     {
@@ -62,7 +62,7 @@ class ItemManager extends Component
         $this->items = Item::orderBy('updated_at', 'desc')->get();
     }
 
-    //^ modal management ============================================================================ ^//
+    //^ Modal management ============================================================================ ^//
     //? modal open logic
     public function openModal($type, $value)
     {
@@ -106,6 +106,7 @@ class ItemManager extends Component
         }
     }
 
+    //^ Loading bar & validation logic ============================================================== ^//
     //? validation function for the add and update logic
     public function validateInput()
     {
@@ -129,6 +130,7 @@ class ItemManager extends Component
         //closes modal and loads the list to reflect new data
         $this->closeModal();
         $this->loadItems();
+        $this->successMsg('added');
     }
 
     //? edit an existing item on id
@@ -156,20 +158,20 @@ class ItemManager extends Component
         $item = Item::findOrFail($this->editingId);
         $item->update($validated);
 
-
         //resets editing id to null
         $this->editingId = null;
 
         //closes modal and loads the list to reflect new data
         $this->closeModal();
         $this->loadItems();
+        $this->successMsg('updated');
     }
 
     //? delete item on id
     public function deleteItem($id)
     {
         //finds item by id and deletes it from db
-        $item = Item::find($id);
+        $item = Item::findOrFail($id);
         $item->delete();
 
         //runs closeModal logic
@@ -177,5 +179,19 @@ class ItemManager extends Component
 
         //loads the list to reflect new data
         $this->loadItems();
+        $this->successMsg('deleted');
+    }
+
+    //^ Misallaneous functions ====================================================================== ^//
+    //? success message logic
+    public function successMsg($value)
+    {
+        $this->succesMsg = $value;
+    }
+
+    //? clear success message
+    public function clearMsg()
+    {
+        $this->succesMsg = '';
     }
 }

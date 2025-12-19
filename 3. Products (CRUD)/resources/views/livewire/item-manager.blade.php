@@ -1,19 +1,18 @@
 <div>
-    <div class="fixed flex justify-center max-w-6 max-w-6 bg-green-500">
-        @if ($succesMsg === 'add')
-        <p>Succesfully added item</p>
-        @elseif ($succesMsg === 'update')
-        <p>Succesfully updated item</p>
-        @elseif ($succesMsg === 'delete')
-        <p>Succesfully deleted item</p>
-        @endif
+    <!-- Succes message -->
+    @if ($succesMsg)
+    <div
+        wire:poll.4s="clearMsg"
+        class="fixed mx-auto max-w-sm bg-green-500 text-white text-center px-4 py-2 rounded-lg shadow animate-slide-down">
+        Successfully {{ $succesMsg }} item
     </div>
+    @endif
+
     <!-- Add/edit modal -->
     @if ($currentModal === 'add' OR $currentModal === 'edit')
+    <!-- <div wire:click="closeModal" class="fixed inset-0 flex items-center justify-center bg-green-500 bg-opacity-50 z-50"></div> -->
     <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-        {{-- Item Form --}}
-        <div class="relative inset-0 rounded-lg p-6 w-full max-w-lg bg-white shadow-lg">
-            <!-- switch the h2 between add and edit -->
+        <div class="relative inset-0 rounded-lg p-6 w-full max-w-lg bg-white shadow-lg z-60">
             @if ($editingId !== null)
             <h2 class="text-xl font-semibold mb-2">Edit Existing Item</h2>
             @else
