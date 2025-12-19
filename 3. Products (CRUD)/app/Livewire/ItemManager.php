@@ -3,12 +3,8 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use Livewire\WithPagination;
 use App\Models\Item;
-use Carbon\Traits\ToStringFormat;
-use GuzzleHttp\Promise\Create;
-use Illuminate\Support\Facades\DB;
-
-use function Laravel\Prompts\error;
 
 class ItemManager extends Component
 {
@@ -31,7 +27,6 @@ class ItemManager extends Component
     //~===============================================================================================~//
 
     //^ Component properties ======================================================================== ^//
-    public $items = [];
     public $name;
     public $description;
     public $price;
@@ -43,23 +38,16 @@ class ItemManager extends Component
 
     //^ Initialization logic ======================================================================== ^//
     //? initialize component state
-    public function mount()
-    {
-        //on load populate component with up to date db
-        $this->loadItems();
-    }
+    use WithPagination;
+
+    protected $paginationTheme = 'tailwind';
 
     //? render the component view
     public function render()
     {
-        return view('livewire.item-manager');
-    }
-
-    //? load items from the database
-    public function loadItems()
-    {
-        //show last added/edited item on top
-        $this->items = Item::orderBy('updated_at', 'desc')->get();
+        return view('livewire.item-manager', [
+            'items' => Item::orderBy('updated_at', 'desc')->paginate(10),
+        ]);
     }
 
     //^ Modal management ============================================================================ ^//
@@ -129,7 +117,6 @@ class ItemManager extends Component
 
         //closes modal and loads the list to reflect new data
         $this->closeModal();
-        $this->loadItems();
         $this->successMsg('added');
     }
 
@@ -161,9 +148,8 @@ class ItemManager extends Component
         //resets editing id to null
         $this->editingId = null;
 
-        //closes modal and loads the list to reflect new data
+        //closes modal and shows success message
         $this->closeModal();
-        $this->loadItems();
         $this->successMsg('updated');
     }
 
@@ -174,11 +160,8 @@ class ItemManager extends Component
         $item = Item::findOrFail($id);
         $item->delete();
 
-        //runs closeModal logic
+        //closes modal and shows success message
         $this->closeModal();
-
-        //loads the list to reflect new data
-        $this->loadItems();
         $this->successMsg('deleted');
     }
 

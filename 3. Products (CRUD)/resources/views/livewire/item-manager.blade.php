@@ -109,13 +109,11 @@
                         </td>
                     </tr>
                     @endforelse
-                    <tr>
-                        <td colspan="5" class="border p-2 text-center text-white font-bold bg-gray-500">
-                            page 1 >
-                        </td>
-                    </tr>
                 </tbody>
             </table>
+            <div class="mt-4">
+                {{ $items->links() }}
+            </div>
         </div>
     </div>
 </div>
