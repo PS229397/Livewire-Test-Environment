@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use App\Models\Item;
+use Carbon\Traits\ToStringFormat;
 use GuzzleHttp\Promise\Create;
 use Illuminate\Support\Facades\DB;
 
@@ -11,32 +12,36 @@ use function Laravel\Prompts\error;
 
 class ItemManager extends Component
 {
-    //=====================/TODO/=====================//
-    //-add success messages on create, update, delete
-    //-disable buttons while processing
-    //-loading spinners
-    //-autofocus on modals
-    //-close modal on outside click and ESC key
-    //-update confirmation on edit
-    //-pagination for item list
-    //-search/filter for item list
-    //-sort for item list
-    //-centeralize validation rules
-    //-refine modal management logic
-    //================================================//
+    //~============================================/TODO/=============================================~//
+    //*-update confirmation on edit
+    //*-refine modal management logic
+    //*-unify confirmation modal
+    //*-extend currentConfirm to be currentModal
+    //&-save state of edit while edit confirmation is up
+    //&-close modal on outside click and ESC key
+    //&-autofocus on modals
+    //*-centeralize validation rules
+    //*-validate before confirm modal on edit
+    //!-loading spinners
+    //!-disable buttons while processing
+    //!-add success messages on create, update, delete
+    //!-pagination for item list
+    //!-search/filter for item list
+    //!-sort for item list
+    //~===============================================================================================~//
 
-    //^ component properties
+    //^ component properties ======================================================================== ^//
     public $items = [];
     public $name;
     public $description;
     public $price;
+    public $currentModal = '';
     public $editingId = null;
-    public $modal = null;
     public $deletingId = null;
-    public $confirmDelete = null;
+    public $succesMsg = '';
     public $tstMsg = '';
 
-    //^ initialization logic
+    //^ initialization logic ======================================================================== ^//
     //? initialize component state
     public function mount()
     {
@@ -53,67 +58,76 @@ class ItemManager extends Component
     //? load items from the database
     public function loadItems()
     {
-        //show last added/edited item ontop
+        //show last added/edited item on top
         $this->items = Item::orderBy('updated_at', 'desc')->get();
     }
 
-    //^ modal management
-    //? modal switch
-    public function switchModal($value)
+    //^ modal management ============================================================================ ^//
+    //? modal open logic
+    public function openModal($type, $value)
     {
-        //if modal is closed open it, vice versa
-        $this->modal = ! $this->modal;
+        //decides which modal to open based on passed type
+        switch ($type) {
+            case 'add':
+                $this->currentModal = $type;
+                break;
 
-        //check if value is numeric to trigger edit mode
-        if ($value !== null && is_numeric($value)) {
-            $this->editItem($value);
+            case 'edit':
+                $this->currentModal = $type;
+                $this->editItem($value);
+                break;
+
+            case 'update':
+                $this->validateInput();
+                $this->currentModal = $type;
+                break;
+
+            case 'delete':
+                $this->currentModal = $type;
+                $this->deletingId = $value;
+                break;
         }
+    }
 
-        //if not numeric reset inputs and errors
+    //? modal close logic
+    public function closeModal()
+    {
+        //if editingId is populated & update confirmation ui open, re-open edit modal closing the confirmation
+        if ($this->editingId !== null && $this->currentModal === 'update') {
+            $this->openModal('edit', $this->editingId);
+        }
+        //else reset all modal states and clear inputs
         else {
+            $this->currentModal = '';
             $this->editingId = null;
+            $this->deletingId = null;
             $this->reset(['name', 'description', 'price']);
             $this->resetErrorBag();
-            return;
         }
     }
 
-    //? delete modal switch
-    public function switchDeleteModal($value)
+    //? validation function for the add and update logic
+    public function validateInput()
     {
-        //if value is not 'close', open modal and set deletingId
-        if ($value !== 'close') {
-            $this->deletingId = $value;
-            $this->confirmDelete = true;
-        }
-
-        //else close modal and reset deletingId
-        else {
-            $this->confirmDelete = false;
-            $this->deletingId = null;
-        }
-    }
-
-    //^ CRUD operations
-    //? create a new item
-    public function createItem()
-    {
-        //input validation parameters
-        $validated = $this->validate([
+        return $this->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
             'price' => 'required|numeric|min:0|max:10000',
         ]);
+    }
+
+    //^ CRUD operations ============================================================================= ^//
+    //? create a new item
+    public function createItem()
+    {
+        //call input validation
+        $validated = $this->validateInput();
 
         //creates a database item with the validated inputs
         Item::create($validated);
 
-        //reset logic to prep inputs for next query
-        $this->reset(['name', 'description', 'price']);
-        $this->resetErrorBag();
-        $this->switchModal('close');
-
-        //loads the list to reflect new data
+        //closes modal and loads the list to reflect new data
+        $this->closeModal();
         $this->loadItems();
     }
 
@@ -135,23 +149,19 @@ class ItemManager extends Component
     //? update edited item
     public function updateItem()
     {
-        //input validation parameters
-        $validated = $this->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string|max:1000',
-            'price' => 'required|numeric|min:0|max:10000',
-        ]);
+        //call input validation
+        $validated = $this->validateInput();
 
         //finds item by id and updates with validated inputs
         $item = Item::findOrFail($this->editingId);
         $item->update($validated);
 
-        //reset logic to prep inputs for next query
-        $this->reset(['name', 'description', 'price']);
-        $this->resetErrorBag();
-        $this->switchModal('close');
 
-        //loads the list to reflect new data
+        //resets editing id to null
+        $this->editingId = null;
+
+        //closes modal and loads the list to reflect new data
+        $this->closeModal();
         $this->loadItems();
     }
 
@@ -162,9 +172,8 @@ class ItemManager extends Component
         $item = Item::find($id);
         $item->delete();
 
-        //reset delete modal state
-        $this->deletingId = null;
-        $this->confirmDelete = false;
+        //runs closeModal logic
+        $this->closeModal();
 
         //loads the list to reflect new data
         $this->loadItems();

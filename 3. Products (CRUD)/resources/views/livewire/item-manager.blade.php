@@ -1,6 +1,15 @@
 <div>
+    <div class="fixed flex justify-center max-w-6 max-w-6 bg-green-500">
+        @if ($succesMsg === 'add')
+        <p>Succesfully added item</p>
+        @elseif ($succesMsg === 'update')
+        <p>Succesfully updated item</p>
+        @elseif ($succesMsg === 'delete')
+        <p>Succesfully deleted item</p>
+        @endif
+    </div>
     <!-- Add/edit modal -->
-    @if ($modal === true)
+    @if ($currentModal === 'add' OR $currentModal === 'edit')
     <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
         {{-- Item Form --}}
         <div class="relative inset-0 rounded-lg p-6 w-full max-w-lg bg-white shadow-lg">
@@ -30,10 +39,10 @@
                 </div>
 
                 <div class="space-x-2 mt-4 w-full flex justify-end">
-                    <button wire:click="switchModal('close')" type="button" class="bg-red-500 text-white px-4 py-2 rounded">cancel</button>
+                    <button wire:click="closeModal()" type="button" class="bg-red-500 text-white px-4 py-2 rounded">cancel</button>
                     <!-- visually changes submit button from add to edit -->
                     @if ($editingId !== null)
-                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Update Item</button>
+                    <button wire:click="openModal('update', {{ $editingId }})" type="button" class="bg-blue-500 text-white px-4 py-2 rounded">Update Item</button>
                     @else
                     <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Add Item</button>
                     @endif
@@ -43,16 +52,20 @@
     </div>
     @endif
 
-    <!-- Delete Confirmation Modal -->
-    @if ($confirmDelete === true)
+    <!-- confirmation modal -->
+    @if ($currentModal === 'update' OR $currentModal === 'delete')
     <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
         <div class="relative inset-0 rounded-lg p-6 w-full max-w-lg bg-white shadow-lg">
-            <h2 class="text-xl font-semibold mb-4">Confirm Deletion</h2>
-            <p class="mb-4">Are you sure you want to delete this item?</p>
+            <h2 class="text-xl font-semibold mb-4">Confirm {{ $currentModal }}?</h2>
+            <p class="mb-4">Are you sure you want to {{ $currentModal }} this item?</p>
             <p class="mb-6 text-red-500 font-bold">This action cannot be undone.</p>
             <div class="flex justify-end space-x-2">
-                <button wire:click="switchDeleteModal('close')" class="bg-gray-500 text-white px-4 py-2 rounded">Cancel</button>
+                <button wire:click="closeModal()" class="bg-gray-500 text-white px-4 py-2 rounded">Cancel</button>
+                @if ($currentModal === 'update')
+                <button wire:click="updateItem({{ $editingId }})" class="bg-blue-500 text-white px-4 py-2 rounded">Update</button>
+                @else
                 <button wire:click="deleteItem({{ $deletingId }})" class="bg-red-500 text-white px-4 py-2 rounded">Delete</button>
+                @endif
             </div>
         </div>
     </div>
@@ -61,16 +74,15 @@
     <!-- Table UI -->
     <div class="p-4">
         <h1 class="text-4xl font-bold mb-4">Item Manager</h1>
-        {{-- Item List --}}
         <div class="mb-6">
-            <table class="border-collapse">
+            <table class=" border rounded-lg shadow-lg">
                 <thead>
                     <tr class="bg-gray-500 text-white">
                         <th class="border p-2">ID</th>
                         <th class="border p-2">Name</th>
                         <th class="border p-2">Description</th>
                         <th class="border p-2">Price</th>
-                        <th class="border p-2"> <button wire:click="switchModal('open')" type="button" class="bg-green-500 text-white px-4 rounded">New item +</button></th>
+                        <th class="border p-2"> <button wire:click="openModal('add', null)" type="button" class="bg-green-500 text-white px-4 rounded">New item +</button></th>
                     </tr>
                 </thead>
                 <tbody class="overflow-y-scroll">
@@ -81,11 +93,11 @@
                         <td class="border p-2">{{ $item->description }}</td>
                         <td class="border p-2">{{ $item->price }}</td>
                         <td class="border p-2">
-                            <button wire:click="switchModal({{ $item->id }})"
+                            <button wire:click="openModal('edit', {{ $item->id }})"
                                 class="bg-blue-500 text-white font-bold px-2 rounded mr-2">
                                 Edit
                             </button>
-                            <button wire:click="switchDeleteModal({{ $item->id }})"
+                            <button wire:click="openModal('delete', {{ $item->id }})"
                                 class="bg-red-500 text-white font-bold px-2 rounded">
                                 Delete
                             </button>
@@ -93,11 +105,16 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" class="border p-2 text-center">
+                        <td colspan="5" class="border p-2 text-center bg-gray-200">
                             No items yet.
                         </td>
                     </tr>
                     @endforelse
+                    <tr>
+                        <td colspan="5" class="border p-2 text-center text-white font-bold bg-gray-500">
+                            page 1 >
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
