@@ -12,34 +12,36 @@ use function Laravel\Prompts\error;
 
 class ItemManager extends Component
 {
-    //~=====================/TODO/=====================~//
+    //~============================================/TODO/=============================================~//
     //*-update confirmation on edit
-    //^-refine modal management logic
-    //!-close modal on outside click and ESC key
-    //!-autofocus on modals
-    //!-centeralize validation rules
-    //!-validate before confirm modal on edit
+    //*-refine modal management logic
+    //*-unify confirmation modal
+    //*-extend currentConfirm to be currentModal
+    //&-save state of edit while edit confirmation is up
+    //&-close modal on outside click and ESC key
+    //&-autofocus on modals
+    //*-centeralize validation rules
+    //*-validate before confirm modal on edit
     //!-loading spinners
     //!-disable buttons while processing
     //!-add success messages on create, update, delete
     //!-pagination for item list
     //!-search/filter for item list
     //!-sort for item list
-    //~================================================~//
+    //~===============================================================================================~//
 
-    //^ component properties
+    //^ component properties ======================================================================== ^//
     public $items = [];
     public $name;
     public $description;
     public $price;
+    public $currentModal = '';
     public $editingId = null;
     public $deletingId = null;
-    public $inputModal = false;
-    public $confirmUpdate = false;
-    public $confirmDelete = false;
+    public $succesMsg = '';
     public $tstMsg = '';
 
-    //^ initialization logic
+    //^ initialization logic ======================================================================== ^//
     //? initialize component state
     public function mount()
     {
@@ -56,33 +58,33 @@ class ItemManager extends Component
     //? load items from the database
     public function loadItems()
     {
-        //show last added/edited item ontop
+        //show last added/edited item on top
         $this->items = Item::orderBy('updated_at', 'desc')->get();
     }
 
-    //^ modal management
+    //^ modal management ============================================================================ ^//
     //? modal open logic
     public function openModal($type, $value)
     {
         //decides which modal to open based on passed type
         switch ($type) {
             case 'add':
-                $this->inputModal = true;
+                $this->currentModal = $type;
                 break;
 
             case 'edit':
-                $this->inputModal = true;
+                $this->currentModal = $type;
                 $this->editItem($value);
                 break;
 
             case 'update':
-                $this->confirmUpdate = true;
-                $this->inputModal = false;
+                $this->validateInput();
+                $this->currentModal = $type;
                 break;
 
             case 'delete':
+                $this->currentModal = $type;
                 $this->deletingId = $value;
-                $this->confirmDelete = true;
                 break;
         }
     }
@@ -91,15 +93,12 @@ class ItemManager extends Component
     public function closeModal()
     {
         //if editingId is populated & update confirmation ui open, re-open edit modal closing the confirmation
-        if ($this->editingId !== null && $this->confirmUpdate === true) {
+        if ($this->editingId !== null && $this->currentModal === 'update') {
             $this->openModal('edit', $this->editingId);
-            $this->confirmUpdate = false;
         }
         //else reset all modal states and clear inputs
         else {
-            $this->inputModal = false;
-            $this->confirmUpdate = false;
-            $this->confirmDelete = false;
+            $this->currentModal = '';
             $this->editingId = null;
             $this->deletingId = null;
             $this->reset(['name', 'description', 'price']);
@@ -107,9 +106,9 @@ class ItemManager extends Component
         }
     }
 
+    //? validation function for the add and update logic
     public function validateInput()
     {
-        //input validation parameters
         return $this->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
@@ -117,16 +116,12 @@ class ItemManager extends Component
         ]);
     }
 
-    //^ CRUD operations
+    //^ CRUD operations ============================================================================= ^//
     //? create a new item
     public function createItem()
     {
-        //input validation parameters
-        $validated = $this->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string|max:1000',
-            'price' => 'required|numeric|min:0|max:10000',
-        ]);
+        //call input validation
+        $validated = $this->validateInput();
 
         //creates a database item with the validated inputs
         Item::create($validated);
@@ -154,12 +149,8 @@ class ItemManager extends Component
     //? update edited item
     public function updateItem()
     {
-        //input validation parameters
-        $validated = $this->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string|max:1000',
-            'price' => 'required|numeric|min:0|max:10000',
-        ]);
+        //call input validation
+        $validated = $this->validateInput();
 
         //finds item by id and updates with validated inputs
         $item = Item::findOrFail($this->editingId);

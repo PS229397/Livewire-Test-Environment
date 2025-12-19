@@ -1,6 +1,15 @@
 <div>
+    <div class="fixed flex justify-center max-w-6 max-w-6 bg-green-500">
+        @if ($succesMsg === 'add')
+        <p>Succesfully added item</p>
+        @elseif ($succesMsg === 'update')
+        <p>Succesfully updated item</p>
+        @elseif ($succesMsg === 'delete')
+        <p>Succesfully deleted item</p>
+        @endif
+    </div>
     <!-- Add/edit modal -->
-    @if ($inputModal === true)
+    @if ($currentModal === 'add' OR $currentModal === 'edit')
     <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
         {{-- Item Form --}}
         <div class="relative inset-0 rounded-lg p-6 w-full max-w-lg bg-white shadow-lg">
@@ -43,31 +52,20 @@
     </div>
     @endif
 
-    <!-- Update Confirmation Modal -->
-    @if ($confirmUpdate === true)
+    <!-- confirmation modal -->
+    @if ($currentModal === 'update' OR $currentModal === 'delete')
     <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
         <div class="relative inset-0 rounded-lg p-6 w-full max-w-lg bg-white shadow-lg">
-            <h2 class="text-xl font-semibold mb-4">Confirm Update</h2>
-            <p class="mb-4">Are you sure you want to update this item? {{ $editingId }}</p>
+            <h2 class="text-xl font-semibold mb-4">Confirm {{ $currentModal }}?</h2>
+            <p class="mb-4">Are you sure you want to {{ $currentModal }} this item?</p>
             <p class="mb-6 text-red-500 font-bold">This action cannot be undone.</p>
             <div class="flex justify-end space-x-2">
                 <button wire:click="closeModal()" class="bg-gray-500 text-white px-4 py-2 rounded">Cancel</button>
+                @if ($currentModal === 'update')
                 <button wire:click="updateItem({{ $editingId }})" class="bg-blue-500 text-white px-4 py-2 rounded">Update</button>
-            </div>
-        </div>
-    </div>
-    @endif
-
-    <!-- Delete Confirmation Modal -->
-    @if ($confirmDelete === true)
-    <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-        <div class="relative inset-0 rounded-lg p-6 w-full max-w-lg bg-white shadow-lg">
-            <h2 class="text-xl font-semibold mb-4">Confirm Deletion</h2>
-            <p class="mb-4">Are you sure you want to delete this item? {{ $deletingId }}</p>
-            <p class="mb-6 text-red-500 font-bold">This action cannot be undone.</p>
-            <div class="flex justify-end space-x-2">
-                <button wire:click="closeModal()" class="bg-gray-500 text-white px-4 py-2 rounded">Cancel</button>
+                @else
                 <button wire:click="deleteItem({{ $deletingId }})" class="bg-red-500 text-white px-4 py-2 rounded">Delete</button>
+                @endif
             </div>
         </div>
     </div>
@@ -76,8 +74,6 @@
     <!-- Table UI -->
     <div class="p-4">
         <h1 class="text-4xl font-bold mb-4">Item Manager</h1>
-        <p>{{ $tstMsg }}</p>
-        {{-- Item List --}}
         <div class="mb-6">
             <table class=" border rounded-lg shadow-lg">
                 <thead>
