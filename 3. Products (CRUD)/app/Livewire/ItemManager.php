@@ -18,10 +18,11 @@ class ItemManager extends Component
     //&-autofocus on modals
     //*-centeralize validation rules
     //*-validate before confirm modal on edit
+    //*-add success messages on create, update, delete
+    //*-success indicator animations
     //!-loading spinners
     //!-disable buttons while processing
-    //^-add success messages on create, update, delete
-    //!-pagination for item list
+    //*-pagination for item list
     //!-search/filter for item list
     //!-sort for item list
     //~===============================================================================================~//
@@ -114,6 +115,7 @@ class ItemManager extends Component
 
         //creates a database item with the validated inputs
         Item::create($validated);
+        $this->resetPage();
 
         //closes modal and loads the list to reflect new data
         $this->closeModal();
@@ -159,6 +161,7 @@ class ItemManager extends Component
         //finds item by id and deletes it from db
         $item = Item::findOrFail($id);
         $item->delete();
+        $this->resetPage();
 
         //closes modal and shows success message
         $this->closeModal();

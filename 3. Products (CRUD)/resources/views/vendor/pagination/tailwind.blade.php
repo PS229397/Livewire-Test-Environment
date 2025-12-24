@@ -1,6 +1,6 @@
 @if ($paginator->hasPages())
     <nav class="flex items-center justify-between px-4 py-3">
-        <div class="flex flex-1 justify-between sm:hidden">
+        <div class="flex flex-1 justify-start sm:hidden">
             {{-- Previous --}}
             @if ($paginator->onFirstPage())
                 <span class="px-4 py-2 text-sm text-gray-400 bg-gray-200 rounded">

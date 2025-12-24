@@ -1,4 +1,4 @@
-<div>
+<div class="fixed w-full">
     <!-- Succes message -->
     @if ($succesMsg)
     <div
@@ -71,10 +71,10 @@
     @endif
 
     <!-- Table UI -->
-    <div class="p-4">
+    <div class="p-4 w-full">
         <h1 class="text-4xl font-bold mb-4">Item Manager</h1>
-        <div class="mb-6">
-            <table class=" border rounded-lg shadow-lg">
+        <div class="mb-6 w-50%">
+            <table class=" border rounded-lg shadow-lg ">
                 <thead>
                     <tr class="bg-gray-500 text-white">
                         <th class="border p-2">ID</th>
@@ -109,11 +109,13 @@
                         </td>
                     </tr>
                     @endforelse
+                    <tr>
+                        <td colspan="5" class="border p-2 text-center bg-gray-200">
+                            {{ $items->links() }}
+                        </td>
+                    </tr>
                 </tbody>
             </table>
-            <div class="mt-4">
-                {{ $items->links() }}
-            </div>
         </div>
     </div>
 </div>

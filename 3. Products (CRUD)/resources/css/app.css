@@ -3,9 +3,15 @@
 @tailwind utilities;
 
 @layer utilities {
-  @keyframes slide-down {
-    from { transform: translateY(-120%); opacity: 0; }
-    to   { transform: translateY(0);      opacity: 1; }
-  }
-  .animate-slide-down { animation: slide-down 400ms ease-out; }
+    @keyframes slide-down {
+        0% { transform: translateY(-120%); opacity: 0; }
+        20% { transform: translateY(0); opacity: 1; }
+        90% { transform: translateY(0); opacity: 1; }
+        100% { transform: translateY(-120%); opacity: 0; }
+    }
+
+    .animate-slide-down {
+        animation: slide-down 4500ms;
+    }
+
 }
