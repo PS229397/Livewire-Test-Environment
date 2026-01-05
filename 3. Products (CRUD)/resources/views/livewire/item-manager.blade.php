@@ -74,11 +74,11 @@
     <div class="p-4 w-full">
         <h1 class="text-4xl font-bold mb-4">Item Manager</h1>
         <div class="mb-6 w-full overflow-x-auto">
-            <table class="border rounded-lg shadow-lg"><!-- find a way to fix the tailwind width 50% error -->
+            <table class="border rounded-lg shadow-lg" style="width: 50%;"><!-- find a way to fix the tailwind width 50% error -->
                 <thead>
-                    <tr class="bg-gray-500">
+                    <tr class="bg-gray-500 w-full flex">
                         <p>{{ $tstMsg }}</p>
-                        <input wire:model.live="search" type="text" placeholder="search..." class="w-36 px-2 rounded">
+                        <input wire:model.live="search" type="text" placeholder="search..." class="px-2 rounded" style="width: 47%;"/>
                         <button wire:click="clearSearch" class="bg-gray-500 text-white font-bold px-2 rounded">Clear</button>
                     </tr>
                     <tr class="bg-gray-500 text-white">
@@ -86,7 +86,7 @@
                         <th class="border p-2">Name</th>
                         <th class="border p-2">Description</th>
                         <th class="border p-2">Price</th>
-                        <th class="border p-2"> <button wire:click="openModal('add', null)" type="button" class="bg-green-500 text-white px-4 rounded">New item +</button></th>
+                        <th class="border p-2" style="width: 140px;"> <button wire:click="openModal('add', null)" type="button" class="bg-green-500 text-white px-4 rounded">New item +</button></th>
                     </tr>
                 </thead>
                 <tbody class="overflow-y-scroll">
