@@ -13,21 +13,21 @@ class ItemManager extends Component
     //*-refine modal management logic
     //*-unify confirmation modal
     //*-extend currentConfirm to be currentModal
-    //&-save state of edit while edit confirmation is up
-    //&-close modal on outside click and ESC key
-    //&-autofocus on modals
+    //*-fill unused table space with blank rows to prevent layout shift
+    //&-save state of edit while edit confirmation is up -- blocker edit cancel calls a new edit on id
+    //&-close modal on outside click and ESC key -- blocker modal background goes over input field???
     //*-centeralize validation rules
     //*-validate before confirm modal on edit
     //*-add success messages on create, update, delete
     //*-success indicator animations
-    //!-loading spinners
-    //!-disable buttons while processing
     //*-pagination for item list
-    //!-search/filter for item list
-    //!-sort for item list
+    //*-search for item list
     //~===============================================================================================~//
 
     //^ Component properties ======================================================================== ^//
+    public int $perPage = 10;
+    public int $fillerRows = 0;
+    protected $paginationTheme = 'tailwind';
     public $name;
     public $description;
     public $price;
@@ -36,18 +36,33 @@ class ItemManager extends Component
     public $deletingId = null;
     public $succesMsg = '';
     public $tstMsg = '';
+    public $search = '';
 
     //^ Initialization logic ======================================================================== ^//
     //? initialize component state
     use WithPagination;
 
-    protected $paginationTheme = 'tailwind';
-
     //? render the component view
     public function render()
     {
+        //checks the search input for value and queries the items accordingly, if no search value, returns all items
+        if ($this->search !== '') {
+            $items = Item::where('name', 'like', '%' . $this->search . '%')
+                ->orWhere('description', 'like', '%' . $this->search . '%')
+                ->orderBy('updated_at', 'desc')
+                ->paginate($this->perPage);
+        } else{
+            $items = Item::orderBy('updated_at', 'desc')->paginate($this->perPage);
+        }
+
+        //checks how many items there are within the table page (max 10) fills up any empty spot with a filler
+        $this->fillerRows = max(
+            0,
+            $this->perPage - $items->count()
+        );
+
         return view('livewire.item-manager', [
-            'items' => Item::orderBy('updated_at', 'desc')->paginate(10),
+            'items' => $items,
         ]);
     }
 
@@ -95,7 +110,7 @@ class ItemManager extends Component
         }
     }
 
-    //^ Loading bar & validation logic ============================================================== ^//
+    //^ Validation logic ============================================================================ ^//
     //? validation function for the add and update logic
     public function validateInput()
     {
@@ -179,5 +194,11 @@ class ItemManager extends Component
     public function clearMsg()
     {
         $this->succesMsg = '';
+    }
+
+    //? clear search input
+    public function clearSearch()
+    {
+        $this->search = '';
     }
 }
