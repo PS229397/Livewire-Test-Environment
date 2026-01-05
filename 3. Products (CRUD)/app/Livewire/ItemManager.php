@@ -3,12 +3,8 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use Livewire\WithPagination;
 use App\Models\Item;
-use Carbon\Traits\ToStringFormat;
-use GuzzleHttp\Promise\Create;
-use Illuminate\Support\Facades\DB;
-
-use function Laravel\Prompts\error;
 
 class ItemManager extends Component
 {
@@ -17,21 +13,21 @@ class ItemManager extends Component
     //*-refine modal management logic
     //*-unify confirmation modal
     //*-extend currentConfirm to be currentModal
-    //&-save state of edit while edit confirmation is up
-    //&-close modal on outside click and ESC key
-    //&-autofocus on modals
+    //*-fill unused table space with blank rows to prevent layout shift
+    //&-save state of edit while edit confirmation is up -- blocker edit cancel calls a new edit on id
+    //&-close modal on outside click and ESC key -- blocker modal background goes over input field???
     //*-centeralize validation rules
     //*-validate before confirm modal on edit
-    //!-loading spinners
-    //!-disable buttons while processing
-    //^-add success messages on create, update, delete
-    //!-pagination for item list
-    //!-search/filter for item list
-    //!-sort for item list
+    //*-add success messages on create, update, delete
+    //*-success indicator animations
+    //*-pagination for item list
+    //*-search for item list
     //~===============================================================================================~//
 
     //^ Component properties ======================================================================== ^//
-    public $items = [];
+    public int $perPage = 10;
+    public int $fillerRows = 0;
+    protected $paginationTheme = 'tailwind';
     public $name;
     public $description;
     public $price;
@@ -40,26 +36,34 @@ class ItemManager extends Component
     public $deletingId = null;
     public $succesMsg = '';
     public $tstMsg = '';
+    public $search = '';
 
     //^ Initialization logic ======================================================================== ^//
     //? initialize component state
-    public function mount()
-    {
-        //on load populate component with up to date db
-        $this->loadItems();
-    }
+    use WithPagination;
 
     //? render the component view
     public function render()
     {
-        return view('livewire.item-manager');
-    }
+        //checks the search input for value and queries the items accordingly, if no search value, returns all items
+        if ($this->search !== '') {
+            $items = Item::where('name', 'like', '%' . $this->search . '%')
+                ->orWhere('description', 'like', '%' . $this->search . '%')
+                ->orderBy('updated_at', 'desc')
+                ->paginate($this->perPage);
+        } else{
+            $items = Item::orderBy('updated_at', 'desc')->paginate($this->perPage);
+        }
 
-    //? load items from the database
-    public function loadItems()
-    {
-        //show last added/edited item on top
-        $this->items = Item::orderBy('updated_at', 'desc')->get();
+        //checks how many items there are within the table page (max 10) fills up any empty spot with a filler
+        $this->fillerRows = max(
+            0,
+            $this->perPage - $items->count()
+        );
+
+        return view('livewire.item-manager', [
+            'items' => $items,
+        ]);
     }
 
     //^ Modal management ============================================================================ ^//
@@ -106,7 +110,7 @@ class ItemManager extends Component
         }
     }
 
-    //^ Loading bar & validation logic ============================================================== ^//
+    //^ Validation logic ============================================================================ ^//
     //? validation function for the add and update logic
     public function validateInput()
     {
@@ -126,10 +130,10 @@ class ItemManager extends Component
 
         //creates a database item with the validated inputs
         Item::create($validated);
+        $this->resetPage();
 
         //closes modal and loads the list to reflect new data
         $this->closeModal();
-        $this->loadItems();
         $this->successMsg('added');
     }
 
@@ -161,9 +165,8 @@ class ItemManager extends Component
         //resets editing id to null
         $this->editingId = null;
 
-        //closes modal and loads the list to reflect new data
+        //closes modal and shows success message
         $this->closeModal();
-        $this->loadItems();
         $this->successMsg('updated');
     }
 
@@ -173,12 +176,10 @@ class ItemManager extends Component
         //finds item by id and deletes it from db
         $item = Item::findOrFail($id);
         $item->delete();
+        $this->resetPage();
 
-        //runs closeModal logic
+        //closes modal and shows success message
         $this->closeModal();
-
-        //loads the list to reflect new data
-        $this->loadItems();
         $this->successMsg('deleted');
     }
 
@@ -193,5 +194,11 @@ class ItemManager extends Component
     public function clearMsg()
     {
         $this->succesMsg = '';
+    }
+
+    //? clear search input
+    public function clearSearch()
+    {
+        $this->search = '';
     }
 }

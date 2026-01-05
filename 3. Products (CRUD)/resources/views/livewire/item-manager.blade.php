@@ -1,4 +1,4 @@
-<div>
+<div class="fixed w-full">
     <!-- Succes message -->
     @if ($succesMsg)
     <div
@@ -71,11 +71,16 @@
     @endif
 
     <!-- Table UI -->
-    <div class="p-4">
+    <div class="p-4 w-full">
         <h1 class="text-4xl font-bold mb-4">Item Manager</h1>
-        <div class="mb-6">
-            <table class=" border rounded-lg shadow-lg">
+        <div class="mb-6 w-full overflow-x-auto">
+            <table class="border rounded-lg shadow-lg"><!-- find a way to fix the tailwind width 50% error -->
                 <thead>
+                    <tr class="bg-gray-500">
+                        <p>{{ $tstMsg }}</p>
+                        <input wire:model.live="search" type="text" placeholder="search..." class="w-36 px-2 rounded">
+                        <button wire:click="clearSearch" class="bg-gray-500 text-white font-bold px-2 rounded">Clear</button>
+                    </tr>
                     <tr class="bg-gray-500 text-white">
                         <th class="border p-2">ID</th>
                         <th class="border p-2">Name</th>
@@ -109,11 +114,20 @@
                         </td>
                     </tr>
                     @endforelse
-                    <tr>
-                        <td colspan="5" class="border p-2 text-center text-white font-bold bg-gray-500">
-                            page 1 >
-                        </td>
-                    </tr>
+                    @for ($i = 0; $i < $fillerRows; $i++ )
+                        <tr class=" odd:bg-gray-200 even:bg-gray-400">
+                        <td class="border p-2">&nbsp;</td>
+                        <td class="border p-2">&nbsp;</td>
+                        <td class="border p-2">&nbsp;</td>
+                        <td class="border p-2">&nbsp;</td>
+                        <td class="border p-2">&nbsp;</td>
+                        </tr>
+                        @endfor
+                        <tr>
+                            <td colspan="5" class="border p-2 text-center bg-gray-200">
+                                {{ $items->links() }}
+                            </td>
+                        </tr>
                 </tbody>
             </table>
         </div>
