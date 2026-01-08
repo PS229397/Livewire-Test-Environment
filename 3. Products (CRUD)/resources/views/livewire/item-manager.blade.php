@@ -27,6 +27,21 @@
                     <input type="text" wire:model="name" class="p-2 border rounded w-full" />
                 </div>
                 <div>
+                    @error('category')<span class="text-red-500">{{ $message }}</span>@enderror
+                    <label class="block mb-1">Category:</label>
+                    <select wire:model="category" class="p-2 border rounded w-full">
+                        <option value="default" selected hidden>-- Please select a category --</option>
+                        <option value="devices">Devices</option>
+                        <option value="displays">Displays</option>
+                        <option value="peripherals">Peripherals</option>
+                        <option value="webcams">Webcams</option>
+                        <option value="headphones">Headphones/Speakers</option>
+                        <option value="storage">Storage devices</option>
+                        <option value="cables">Cables/Chargers</option>
+                        <option value="accesoires">Accesoires</option>
+                    </select>
+                </div>
+                <div>
                     @error('description')<span class="text-red-500">{{ $message }}</span>@enderror
                     <label class="block mb-1">Description:</label>
                     <textarea wire:model="description" class="p-2 border rounded w-full"></textarea>
@@ -78,7 +93,7 @@
                 <thead>
                     <tr class="bg-gray-500 w-full flex">
                         <p>{{ $tstMsg }}</p>
-                        <input wire:model.live="search" type="text" placeholder="search..." class="px-2 rounded" style="width: 47%;"/>
+                        <input wire:model.live="search" type="text" placeholder="search..." class="px-2 rounded" style="width: 47%;" />
                         <button wire:click="clearSearch" class="bg-gray-500 text-white font-bold px-2 rounded">Clear</button>
                     </tr>
                     <tr class="bg-gray-500 text-white">

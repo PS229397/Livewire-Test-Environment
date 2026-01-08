@@ -16,6 +16,15 @@ class ItemManager extends Component
     //*-fill unused table space with blank rows to prevent layout shift
     //&-save state of edit while edit confirmation is up -- blocker edit cancel calls a new edit on id
     //&-close modal on outside click and ESC key -- blocker modal background goes over input field???
+    //!-make a category table
+    //!-link category_id as a foreign key into items table
+    //!-
+    //!-
+    //!-
+    //!-
+    //!-in the category select replace hardcoded options with a foreach category in categories(modular design)
+    //^-integrate category within validation and modal close
+    //!-make category a searchable within search
     //*-centeralize validation rules
     //*-validate before confirm modal on edit
     //*-add success messages on create, update, delete
@@ -29,6 +38,7 @@ class ItemManager extends Component
     public int $fillerRows = 0;
     protected $paginationTheme = 'tailwind';
     public $name;
+    public $category;
     public $description;
     public $price;
     public $currentModal = '';
@@ -105,7 +115,7 @@ class ItemManager extends Component
             $this->currentModal = '';
             $this->editingId = null;
             $this->deletingId = null;
-            $this->reset(['name', 'description', 'price']);
+            $this->reset(['name', 'category', 'description', 'price']);
             $this->resetErrorBag();
         }
     }
@@ -116,6 +126,7 @@ class ItemManager extends Component
     {
         return $this->validate([
             'name' => 'required|string|max:255',
+            'category' => 'required',
             'description' => 'nullable|string|max:1000',
             'price' => 'required|numeric|min:0|max:10000',
         ]);
@@ -148,6 +159,7 @@ class ItemManager extends Component
 
         //populate inputs with existing data
         $this->name = $item->name;
+        $this->category = $item->category;
         $this->description = $item->description;
         $this->price = $item->price;
     }
