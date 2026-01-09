@@ -117,6 +117,7 @@ class ItemManager extends Component
         if ($this->editingId !== null && $this->currentModal === 'update') {
             $this->openModal('edit', $this->editingId);
         }
+
         //else reset all modal states and clear inputs
         else {
             $this->currentModal = '';
