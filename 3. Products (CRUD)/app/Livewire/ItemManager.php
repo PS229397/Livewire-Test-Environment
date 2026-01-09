@@ -21,7 +21,7 @@ class ItemManager extends Component
     //*-link category_id as a foreign key into items table
     //*-in the category select replace hardcoded options with a foreach category in categories(dynamic design)
     //!-make sure category gets pulled on edit and the select state is set to the category
-    //!-integrate category within validation and modal close
+    //*-integrate category within validation and modal close
     //!-make category a searchable within search
     //*-centeralize validation rules
     //*-validate before confirm modal on edit
@@ -36,7 +36,7 @@ class ItemManager extends Component
     public int $fillerRows = 0;
     protected $paginationTheme = 'tailwind';
     public $name;
-    public $category;
+    public $category_id;
     public $description;
     public $price;
     public $currentModal = '';
@@ -59,7 +59,7 @@ class ItemManager extends Component
                 ->orWhere('description', 'like', '%' . $this->search . '%')
                 ->orderBy('updated_at', 'desc')
                 ->paginate($this->perPage);
-        } else{
+        } else {
             $items = Item::orderBy('updated_at', 'desc')->paginate($this->perPage);
         }
 
@@ -114,18 +114,17 @@ class ItemManager extends Component
             $this->currentModal = '';
             $this->editingId = null;
             $this->deletingId = null;
-            $this->reset(['name', 'category', 'description', 'price']);
+            $this->reset(['name', 'category_id', 'description', 'price']);
             $this->resetErrorBag();
         }
     }
 
     //^ Validation logic ============================================================================ ^//
-    //? validation function for the add and update logic
     public function validateInput()
     {
         return $this->validate([
             'name' => 'required|string|max:255',
-            'category' => 'required',
+            'category_id' => 'required|exists:categories,id',
             'description' => 'nullable|string|max:1000',
             'price' => 'required|numeric|min:0|max:10000',
         ]);
@@ -150,15 +149,12 @@ class ItemManager extends Component
     //? edit an existing item on id
     public function editItem($id)
     {
-        //sets editingId to the passed id to trigger edit mode
         $this->editingId = $id;
 
-        //finds item by id and populates inputs with existing data
-        $item = Item::findOrFail($id);
+        $item = Item::with('category')->findOrFail($id);
 
-        //populate inputs with existing data
         $this->name = $item->name;
-        $this->category = $item->category->slug;
+        $this->category_id = $item->category_id;
         $this->description = $item->description;
         $this->price = $item->price;
     }

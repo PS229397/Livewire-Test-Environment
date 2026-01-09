@@ -29,7 +29,7 @@
                 <div>
                     @error('category')<span class="text-red-500">{{ $message }}</span>@enderror
                     <label class="block mb-1">Category:</label>
-                    <select wire:model="category" class="p-2 border rounded w-full">
+                    <select wire:model="category_id" class="p-2 border rounded w-full">
                         <option value="" selected hidden>-- Please select a category --</option>
 
                         @foreach ($categories as $category)
