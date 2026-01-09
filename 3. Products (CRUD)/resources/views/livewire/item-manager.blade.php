@@ -30,7 +30,7 @@
                     @error('category')<span class="text-red-500">{{ $message }}</span>@enderror
                     <label class="block mb-1">Category:</label>
                     <select wire:model="category" class="p-2 border rounded w-full">
-                        <option value="" selected disabled>-- Please select a category --</option>
+                        <option value="" selected hidden>-- Please select a category --</option>
 
                         @foreach ($categories as $category)
                         <option value="{{ $category->id }}">
@@ -89,14 +89,18 @@
         <div class="mb-6 w-full overflow-x-auto">
             <table class="border rounded-lg shadow-lg" style="width: 50%;"><!-- find a way to fix the tailwind width 50% error -->
                 <thead>
-                    <tr class="bg-gray-500 w-full flex">
-                        <p>{{ $tstMsg }}</p>
-                        <input wire:model.live="search" type="text" placeholder="search..." class="px-2 rounded" style="width: 47%;" />
-                        <button wire:click="clearSearch" class="bg-gray-500 text-white font-bold px-2 rounded">Clear</button>
+                    <tr class="bg-gray-200">
+                        <td colspan="5" class="p-2">
+                            <input wire:model.live="search" type="text" placeholder="search..." class="px-2 rounded w-full" />
+                        </td>
+                        <td colspan="1" class="p-2 flex justify-end">
+                            <button wire:click="clearSearch" class="bg-gray-500 text-white font-bold px-2 rounded w-full">Clear search</button>
+                        </td>
                     </tr>
                     <tr class="bg-gray-500 text-white">
                         <th class="border p-2">ID</th>
                         <th class="border p-2">Name</th>
+                        <th class="border p-2">Category</th>
                         <th class="border p-2">Description</th>
                         <th class="border p-2">Price</th>
                         <th class="border p-2" style="width: 140px;"> <button wire:click="openModal('add', null)" type="button" class="bg-green-500 text-white px-4 rounded">New item +</button></th>
@@ -107,6 +111,7 @@
                     <tr class=" odd:bg-gray-200 even:bg-gray-400">
                         <td class="border p-2">{{ $item->id }}</td>
                         <td class="border p-2">{{ $item->name }}</td>
+                        <td class="border p-2">{{ $item->category->name }}</td>
                         <td class="border p-2">{{ $item->description }}</td>
                         <td class="border p-2">{{ $item->price }}</td>
                         <td class="border p-2">
@@ -134,10 +139,11 @@
                         <td class="border p-2">&nbsp;</td>
                         <td class="border p-2">&nbsp;</td>
                         <td class="border p-2">&nbsp;</td>
+                        <td class="border p-2">&nbsp;</td>
                         </tr>
                         @endfor
                         <tr>
-                            <td colspan="5" class="border p-2 text-center bg-gray-200">
+                            <td colspan="6" class="border p-2 text-center bg-gray-200">
                                 {{ $items->links() }}
                             </td>
                         </tr>
