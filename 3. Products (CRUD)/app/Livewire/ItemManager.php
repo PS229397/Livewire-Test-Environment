@@ -17,11 +17,11 @@ class ItemManager extends Component
     //*-fill unused table space with blank rows to prevent layout shift
     //&-save state of edit while edit confirmation is up -- blocker edit cancel calls a new edit on id
     //&-close modal on outside click and ESC key -- blocker modal background goes over input field???
-    //!-make a category table
-    //!-link category_id as a foreign key into items table
-    //!-in the category select replace hardcoded options with a foreach category in categories(dynamic design)
+    //*-make a category table
+    //*-link category_id as a foreign key into items table
+    //*-in the category select replace hardcoded options with a foreach category in categories(dynamic design)
     //!-make sure category gets pulled on edit and the select state is set to the category
-    //^-integrate category within validation and modal close
+    //!-integrate category within validation and modal close
     //!-make category a searchable within search
     //*-centeralize validation rules
     //*-validate before confirm modal on edit
@@ -158,7 +158,7 @@ class ItemManager extends Component
 
         //populate inputs with existing data
         $this->name = $item->name;
-        $this->category = $item->category;
+        $this->category = $item->category->slug;
         $this->description = $item->description;
         $this->price = $item->price;
     }

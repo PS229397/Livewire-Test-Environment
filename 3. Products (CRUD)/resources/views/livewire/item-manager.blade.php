@@ -87,16 +87,19 @@
     <div class="p-4 w-full">
         <h1 class="text-4xl font-bold mb-4">Item Manager</h1>
         <div class="mb-6 w-full overflow-x-auto">
-            <table class="border rounded-lg shadow-lg" style="width: 50%;"><!-- find a way to fix the tailwind width 50% error -->
+            <table class="border rounded-lg shadow-lg" style="width: 70%;"><!-- find a way to fix the tailwind width 70% error -->
                 <thead>
-                    <tr class="bg-gray-200">
+                    <!-- searchbar ui -->
+                    <tr class="bg-gray-500">
                         <td colspan="5" class="p-2">
                             <input wire:model.live="search" type="text" placeholder="search..." class="px-2 rounded w-full" />
                         </td>
                         <td colspan="1" class="p-2 flex justify-end">
-                            <button wire:click="clearSearch" class="bg-gray-500 text-white font-bold px-2 rounded w-full">Clear search</button>
+                            <button wire:click="clearSearch" class="bg-gray-200 text-black font-bold px-2 rounded w-full">Clear search</button>
                         </td>
                     </tr>
+
+                    <!-- colum names and create controll -->
                     <tr class="bg-gray-500 text-white">
                         <th class="border p-2">ID</th>
                         <th class="border p-2">Name</th>
@@ -106,7 +109,10 @@
                         <th class="border p-2" style="width: 140px;"> <button wire:click="openModal('add', null)" type="button" class="bg-green-500 text-white px-4 rounded">New item +</button></th>
                     </tr>
                 </thead>
+
+                <!-- DB data -->
                 <tbody class="overflow-y-scroll">
+                    <!-- for each item load data and crud controlls -->
                     @forelse ($items as $item)
                     <tr class=" odd:bg-gray-200 even:bg-gray-400">
                         <td class="border p-2">{{ $item->id }}</td>
@@ -125,13 +131,17 @@
                             </button>
                         </td>
                     </tr>
+
+                    <!-- if list empty let the user know in the ui -->
                     @empty
                     <tr>
-                        <td colspan="5" class="border p-2 text-center bg-gray-200">
+                        <td colspan="6" class="border p-2 text-center bg-gray-200">
                             No items yet.
                         </td>
                     </tr>
                     @endforelse
+
+                    <!-- filler rows to prevent layout shift -->
                     @for ($i = 0; $i < $fillerRows; $i++ )
                         <tr class=" odd:bg-gray-200 even:bg-gray-400">
                         <td class="border p-2">&nbsp;</td>
@@ -142,6 +152,8 @@
                         <td class="border p-2">&nbsp;</td>
                         </tr>
                         @endfor
+
+                        <!-- page controlls -->
                         <tr>
                             <td colspan="6" class="border p-2 text-center bg-gray-200">
                                 {{ $items->links() }}
