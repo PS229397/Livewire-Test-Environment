@@ -18,11 +18,8 @@ class ItemManager extends Component
     //&-close modal on outside click and ESC key -- blocker modal background goes over input field???
     //!-make a category table
     //!-link category_id as a foreign key into items table
-    //!-
-    //!-
-    //!-
-    //!-
-    //!-in the category select replace hardcoded options with a foreach category in categories(modular design)
+    //!-in the category select replace hardcoded options with a foreach category in categories(dynamic design)
+    //!-make sure category gets pulled on edit and the select state is set to the category
     //^-integrate category within validation and modal close
     //!-make category a searchable within search
     //*-centeralize validation rules
