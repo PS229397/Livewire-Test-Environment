@@ -47,7 +47,7 @@
                 <div>
                     @error('price')<span class="text-red-500">{{ $message }}</span>@enderror
                     <label class="block mb-1">Price:</label>
-                    <input type="number" wire:model="price" class="p-2 border rounded w-full" />
+                    <input type="number" wire:model="price" step="0.05" class="p-2 border rounded w-full" />
                 </div>
 
                 <div class="space-x-2 mt-4 w-full flex justify-end">
@@ -101,11 +101,11 @@
 
                     <!-- colum names and create controll -->
                     <tr class="bg-gray-500 text-white">
-                        <th class="border p-2">ID</th>
-                        <th class="border p-2">Name</th>
-                        <th class="border p-2">Category</th>
+                        <th class="border p-2 text-center" style="width: 50px;">ID</th>
+                        <th class="border p-2" style="width: 250px;">Name</th>
+                        <th class="border p-2" style="width: 200px;">Category</th>
                         <th class="border p-2">Description</th>
-                        <th class="border p-2">Price</th>
+                        <th class="border p-2 text-center" style="width: 100px;">Price</th>
                         <th class="border p-2" style="width: 140px;"> <button wire:click="openModal('add', null)" type="button" class="bg-green-500 text-white px-4 rounded">New item +</button></th>
                     </tr>
                 </thead>
@@ -119,7 +119,7 @@
                         <td class="border p-2">{{ $item->name }}</td>
                         <td class="border p-2">{{ $item->category->name }}</td>
                         <td class="border p-2">{{ $item->description }}</td>
-                        <td class="border p-2">{{ $item->price }}</td>
+                        <td class="border p-2">€{{ $item->price }}</td>
                         <td class="border p-2">
                             <button wire:click="openModal('edit', {{ $item->id }})"
                                 class="bg-blue-500 text-white font-bold px-2 rounded mr-2">
