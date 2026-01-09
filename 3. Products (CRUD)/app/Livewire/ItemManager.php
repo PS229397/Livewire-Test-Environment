@@ -15,20 +15,23 @@ class ItemManager extends Component
     //*-unify confirmation modal
     //*-extend currentConfirm to be currentModal
     //*-fill unused table space with blank rows to prevent layout shift
-    //&-save state of edit while edit confirmation is up -- blocker edit cancel calls a new edit on id
-    //&-close modal on outside click and ESC key -- blocker modal background goes over input field???
+    //!-save state of edit while edit confirmation is up -- blocker edit cancel calls a new edit on id
+    //!-close modal on outside click and ESC key -- blocker modal background goes over input field???
     //*-make a category table
     //*-link category_id as a foreign key into items table
     //*-in the category select replace hardcoded options with a foreach category in categories(dynamic design)
-    //!-make sure category gets pulled on edit and the select state is set to the category
+    //*-make sure category gets pulled on edit and the select state is set to the category
     //*-integrate category within validation and modal close
-    //!-make category a searchable within search
     //*-centeralize validation rules
     //*-validate before confirm modal on edit
     //*-add success messages on create, update, delete
     //*-success indicator animations
     //*-pagination for item list
     //*-search for item list
+    //*-make category a searchable within search
+    //*-clear search button
+    //&-sortable columns
+    //&-filter by category
     //~===============================================================================================~//
 
     //^ Component properties ======================================================================== ^//
@@ -55,8 +58,13 @@ class ItemManager extends Component
     {
         //checks the search input for value and queries the items accordingly, if no search value, returns all items
         if ($this->search !== '') {
-            $items = Item::where('name', 'like', '%' . $this->search . '%')
-                ->orWhere('description', 'like', '%' . $this->search . '%')
+            $items = Item::where(function ($query) {
+                $query->where('name', 'like', '%' . $this->search . '%')
+                    ->orWhere('description', 'like', '%' . $this->search . '%')
+                    ->orWhereHas('category', function ($q) {
+                        $q->where('name', 'like', '%' . $this->search . '%');
+                    });
+            })
                 ->orderBy('updated_at', 'desc')
                 ->paginate($this->perPage);
         } else {
