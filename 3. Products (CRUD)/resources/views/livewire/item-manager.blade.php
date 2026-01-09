@@ -30,15 +30,13 @@
                     @error('category')<span class="text-red-500">{{ $message }}</span>@enderror
                     <label class="block mb-1">Category:</label>
                     <select wire:model="category" class="p-2 border rounded w-full">
-                        <option value="default" selected hidden>-- Please select a category --</option>
-                        <option value="devices">Devices</option>
-                        <option value="displays">Displays</option>
-                        <option value="peripherals">Peripherals</option>
-                        <option value="webcams">Webcams</option>
-                        <option value="headphones">Headphones/Speakers</option>
-                        <option value="storage">Storage devices</option>
-                        <option value="cables">Cables/Chargers</option>
-                        <option value="accesoires">Accesoires</option>
+                        <option value="" selected disabled>-- Please select a category --</option>
+
+                        @foreach ($categories as $category)
+                        <option value="{{ $category->id }}">
+                            {{ $category->name }}
+                        </option>
+                        @endforeach
                     </select>
                 </div>
                 <div>

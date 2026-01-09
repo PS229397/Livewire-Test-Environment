@@ -5,6 +5,7 @@ namespace App\Livewire;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Item;
+use App\Models\Category;
 
 class ItemManager extends Component
 {
@@ -70,6 +71,7 @@ class ItemManager extends Component
 
         return view('livewire.item-manager', [
             'items' => $items,
+            'categories' => Category::orderBy('name')->get(),
         ]);
     }
 
