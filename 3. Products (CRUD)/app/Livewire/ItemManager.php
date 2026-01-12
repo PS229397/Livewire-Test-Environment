@@ -32,7 +32,7 @@ class ItemManager extends Component
     //*-clear search button
     //* -sortable columns
     //&-sort on category name
-    //&-visual helpers on sort to check if first-last last-first
+    //*-visual helpers on sort to check if first-last last-first
     //&-return to page 1 on create and edit
     //~===============================================================================================~//
 
@@ -89,39 +89,6 @@ class ItemManager extends Component
         ]);
     }
 
-    //? column sorting logic
-    public function sortBy($value)
-    {
-        //if sorting by a new column, reset sort count and sort indictor, else increment sort count
-        if ($this->sort !== $value) {
-            $this->sortIndicator = [];
-            $this->sort = $value;
-            $this->sortCount = 1;
-        } else {
-            $this->sortCount++;
-        }
-
-        //if sort is clicked once, set to ascending with fitting indicator
-        if ($this->sortCount === 1) {
-            $this->sortDirection = 'asc';
-            $this->sortIndicator[$value] = '↑';
-            return;
-        }
-
-        //if sort is clicked twice, set to descending with fitting indicator
-        if ($this->sortCount === 2) {
-            $this->sortDirection = 'desc';
-            $this->sortIndicator[$value] = '↓';
-            return;
-        }
-
-        //if sortCount is 3 or more, reset to default sort, remove indicator
-        $this->sort = 'updated_at';
-        $this->sortDirection = 'desc';
-        $this->sortCount = 0;
-        $this->sortIndicator = [];
-    }
-
     //^ Modal management ============================================================================ ^//
     //? modal open logic
     public function openModal($type, $value)
@@ -167,7 +134,8 @@ class ItemManager extends Component
         }
     }
 
-    //^ Validation logic ============================================================================ ^//
+    //^ Validation and column sorting logic ========================================================= ^//
+    //? input validation logic
     public function validateInput()
     {
         return $this->validate([
@@ -176,6 +144,39 @@ class ItemManager extends Component
             'description' => 'nullable|string|max:1000',
             'price' => 'required|numeric|min:0|max:10000',
         ]);
+    }
+
+    //? column sorting logic
+    public function sortBy($value)
+    {
+        //if sorting by a new column, reset sort count and sort indictor, else increment sort count
+        if ($this->sort !== $value) {
+            $this->sortIndicator = [];
+            $this->sort = $value;
+            $this->sortCount = 1;
+        } else {
+            $this->sortCount++;
+        }
+
+        //if sort is clicked once, set to ascending with fitting indicator
+        if ($this->sortCount === 1) {
+            $this->sortDirection = 'asc';
+            $this->sortIndicator[$value] = '↑';
+            return;
+        }
+
+        //if sort is clicked twice, set to descending with fitting indicator
+        if ($this->sortCount === 2) {
+            $this->sortDirection = 'desc';
+            $this->sortIndicator[$value] = '↓';
+            return;
+        }
+
+        //if sortCount is 3 or more, reset to default sort, remove indicator
+        $this->sort = 'updated_at';
+        $this->sortDirection = 'desc';
+        $this->sortCount = 0;
+        $this->sortIndicator = [];
     }
 
     //^ CRUD operations ============================================================================= ^//
@@ -238,7 +239,7 @@ class ItemManager extends Component
         $this->successMsg('deleted');
     }
 
-    //^ Misallaneous functions ====================================================================== ^//
+    //^ Miscallaneous functions ====================================================================== ^//
     //? success message logic
     public function successMsg($value)
     {
