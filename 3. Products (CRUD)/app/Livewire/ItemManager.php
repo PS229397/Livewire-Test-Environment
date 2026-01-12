@@ -15,8 +15,8 @@ class ItemManager extends Component
     //*-unify confirmation modal
     //*-extend currentConfirm to be currentModal
     //*-fill unused table space with blank rows to prevent layout shift
-    //!-save state of edit while edit confirmation is up -- blocker edit cancel calls a new edit on id
-    //!-close modal on outside click and ESC key -- blocker modal background goes over input field???
+    //!-save state of edit while edit confirmation is up -- blocker: edit cancel calls a new edit on id || potential fix: hiding modal instead of closing outright on cancel
+    //*-close modal on outside click and ESC key
     //*-make a category table
     //*-link category_id as a foreign key into items table
     //*-in the category select replace hardcoded options with a foreach category in categories(dynamic design)
@@ -31,7 +31,6 @@ class ItemManager extends Component
     //*-make category a searchable within search
     //*-clear search button
     //&-sortable columns
-    //&-filter by category
     //~===============================================================================================~//
 
     //^ Component properties ======================================================================== ^//

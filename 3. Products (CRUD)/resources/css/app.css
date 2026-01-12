@@ -14,3 +14,35 @@
         animation: slide-down 5000ms;
     }
 }
+
+.addBtn{
+    @apply bg-green-500;
+}
+
+.addBtn:hover{
+    @apply bg-green-600 shadow-lg;
+}
+
+.editBtn{
+    @apply bg-blue-500;
+}
+
+.editBtn:hover{
+    @apply bg-blue-600 shadow-lg;
+}
+
+.deleteBtn{
+    @apply bg-red-500;
+}
+
+.deleteBtn:hover{
+    @apply bg-red-600 shadow-lg;
+}
+
+.cancelBtn{
+    @apply bg-gray-200 border border-black;
+}
+
+.cancelBtn:hover{
+    @apply bg-gray-500 shadow-lg text-white;
+}

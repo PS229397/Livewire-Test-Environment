@@ -11,8 +11,8 @@
     <!-- Add/edit modal -->
     @if ($currentModal === 'add' OR $currentModal === 'edit')
     <!-- <div wire:click="closeModal" class="fixed inset-0 flex items-center justify-center bg-green-500 bg-opacity-50 z-50"></div> -->
-    <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-        <div class="relative inset-0 rounded-lg p-6 w-full max-w-lg bg-white shadow-lg z-60">
+    <div wire:click="closeModal" wire:keydown.escape.window="closeModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" style="z-index: 1; cursor: pointer;">
+        <div wire:click.stop class="relative inset-0 rounded-lg p-6 w-full max-w-lg bg-white shadow-lg z-60" style="z-index: 10; cursor: default;">
             @if ($editingId !== null)
             <h2 class="text-xl font-semibold mb-2">Edit Existing Item</h2>
             @else
@@ -51,12 +51,12 @@
                 </div>
 
                 <div class="space-x-2 mt-4 w-full flex justify-end">
-                    <button wire:click="closeModal()" type="button" class="bg-red-500 text-white px-4 py-2 rounded">cancel</button>
+                    <button wire:click="closeModal()" type="button" class="deleteBtn text-white px-4 py-2 rounded">cancel</button>
                     <!-- visually changes submit button from add to edit -->
                     @if ($editingId !== null)
-                    <button wire:click="openModal('update', {{ $editingId }})" type="button" class="bg-blue-500 text-white px-4 py-2 rounded">Update Item</button>
+                    <button wire:click="openModal('update', {{ $editingId }})" type="button" class="editBtn text-white px-4 py-2 rounded">Update Item</button>
                     @else
-                    <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Add Item</button>
+                    <button type="submit" class="addBtn text-white px-4 py-2 rounded">Add Item</button>
                     @endif
                 </div>
             </form>
@@ -66,17 +66,17 @@
 
     <!-- confirmation modal -->
     @if ($currentModal === 'update' OR $currentModal === 'delete')
-    <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-        <div class="relative inset-0 rounded-lg p-6 w-full max-w-lg bg-white shadow-lg">
+    <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" style="cursor: not-allowed;">
+        <div class="relative inset-0 rounded-lg p-6 w-full max-w-lg bg-white shadow-lg" style="cursor: default;>
             <h2 class="text-xl font-semibold mb-4">Confirm {{ $currentModal }}?</h2>
             <p class="mb-4">Are you sure you want to {{ $currentModal }} this item?</p>
             <p class="mb-6 text-red-500 font-bold">This action cannot be undone.</p>
             <div class="flex justify-end space-x-2">
-                <button wire:click="closeModal()" class="bg-gray-500 text-white px-4 py-2 rounded">Cancel</button>
+                <button wire:click="closeModal()" class="cancelBtn text-black px-4 py-2 rounded">Cancel</button>
                 @if ($currentModal === 'update')
-                <button wire:click="updateItem({{ $editingId }})" class="bg-blue-500 text-white px-4 py-2 rounded">Update</button>
+                <button wire:click="updateItem({{ $editingId }})" class="editBtn text-white px-4 py-2 rounded">Update</button>
                 @else
-                <button wire:click="deleteItem({{ $deletingId }})" class="bg-red-500 text-white px-4 py-2 rounded">Delete</button>
+                <button wire:click="deleteItem({{ $deletingId }})" class="deleteBtn text-white px-4 py-2 rounded">Delete</button>
                 @endif
             </div>
         </div>
@@ -95,7 +95,7 @@
                             <input wire:model.live="search" type="text" placeholder="search..." class="px-2 rounded w-full" />
                         </td>
                         <td colspan="1" class="p-2 flex justify-end">
-                            <button wire:click="clearSearch" class="bg-gray-200 text-black font-bold px-2 rounded w-full">Clear search</button>
+                            <button wire:click="clearSearch" class="cancelBtn text-black font-bold px-2 rounded w-full">Clear search</button>
                         </td>
                     </tr>
 
@@ -106,7 +106,7 @@
                         <th class="border p-2" style="width: 200px;">Category</th>
                         <th class="border p-2">Description</th>
                         <th class="border p-2 text-center" style="width: 100px;">Price</th>
-                        <th class="border p-2" style="width: 140px;"> <button wire:click="openModal('add', null)" type="button" class="bg-green-500 text-white px-4 rounded">New item +</button></th>
+                        <th class="border p-2" style="width: 140px;"> <button wire:click="openModal('add', null)" type="button" class="addBtn text-white px-4 rounded">New item +</button></th>
                     </tr>
                 </thead>
 
@@ -122,11 +122,11 @@
                         <td class="border p-2">€{{ $item->price }}</td>
                         <td class="border p-2">
                             <button wire:click="openModal('edit', {{ $item->id }})"
-                                class="bg-blue-500 text-white font-bold px-2 rounded mr-2">
+                                class="editBtn text-white font-bold px-2 rounded mr-2">
                                 Edit
                             </button>
                             <button wire:click="openModal('delete', {{ $item->id }})"
-                                class="bg-red-500 text-white font-bold px-2 rounded">
+                                class="deleteBtn text-white font-bold px-2 rounded">
                                 Delete
                             </button>
                         </td>
