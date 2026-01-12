@@ -30,7 +30,7 @@ class ItemManager extends Component
     //*-search for item list
     //*-make category a searchable within search
     //*-clear search button
-    //^-sortable columns
+    //* -sortable columns
     //&-sort on category name
     //&-visual helpers on sort to check if first-last last-first
     //&-return to page 1 on create and edit
@@ -53,6 +53,7 @@ class ItemManager extends Component
     public $sort = 'updated_at';
     public $sortCount = 0;
     public $sortDirection = 'desc';
+    public $sortIndicator = [];
 
     //^ Initialization logic ======================================================================== ^//
     //? initialize component state
@@ -91,30 +92,34 @@ class ItemManager extends Component
     //? column sorting logic
     public function sortBy($value)
     {
-        //if sorting by a new column, reset sort count, else increment sort count
+        //if sorting by a new column, reset sort count and sort indictor, else increment sort count
         if ($this->sort !== $value) {
+            $this->sortIndicator = [];
             $this->sort = $value;
             $this->sortCount = 1;
         } else {
             $this->sortCount++;
         }
 
-        //if sort is clicked once, set to ascending
+        //if sort is clicked once, set to ascending with fitting indicator
         if ($this->sortCount === 1) {
             $this->sortDirection = 'asc';
+            $this->sortIndicator[$value] = '↑';
             return;
         }
 
-        //if sort is clicked twice, set to descending
+        //if sort is clicked twice, set to descending with fitting indicator
         if ($this->sortCount === 2) {
             $this->sortDirection = 'desc';
+            $this->sortIndicator[$value] = '↓';
             return;
         }
 
-        //if sortCount is 3 or more, reset to default sort
+        //if sortCount is 3 or more, reset to default sort, remove indicator
         $this->sort = 'updated_at';
         $this->sortDirection = 'desc';
         $this->sortCount = 0;
+        $this->sortIndicator = [];
     }
 
     //^ Modal management ============================================================================ ^//
