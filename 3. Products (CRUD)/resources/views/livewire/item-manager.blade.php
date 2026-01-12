@@ -67,7 +67,7 @@
     <!-- confirmation modal -->
     @if ($currentModal === 'update' OR $currentModal === 'delete')
     <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" style="cursor: not-allowed;">
-        <div class="relative inset-0 rounded-lg p-6 w-full max-w-lg bg-white shadow-lg" style="cursor: default;>
+        <div class="relative inset-0 rounded-lg p-6 w-full max-w-lg bg-white shadow-lg" style="cursor: default;">
             <h2 class="text-xl font-semibold mb-4">Confirm {{ $currentModal }}?</h2>
             <p class="mb-4">Are you sure you want to {{ $currentModal }} this item?</p>
             <p class="mb-6 text-red-500 font-bold">This action cannot be undone.</p>
@@ -86,6 +86,7 @@
     <!-- Table UI -->
     <div class="p-4 w-full">
         <h1 class="text-4xl font-bold mb-4">Item Manager</h1>
+        <p>{{ $sort }} {{ $sortCount }}</p>
         <div class="mb-6 w-full overflow-x-auto">
             <table class="border rounded-lg shadow-lg" style="width: 70%;"><!-- find a way to fix the tailwind width 70% error -->
                 <thead>
@@ -101,12 +102,12 @@
 
                     <!-- colum names and create controll -->
                     <tr class="bg-gray-500 text-white">
-                        <th class="border p-2 text-center" style="width: 50px;">ID</th>
-                        <th class="border p-2" style="width: 250px;">Name</th>
-                        <th class="border p-2" style="width: 200px;">Category</th>
+                        <th class="border text-center" style="width: 50px;"><button wire:click="sortBy('id')" class="w-full h-full">ID</button></th>
+                        <th class="border" style="width: 250px;"><button wire:click="sortBy('name')" class="w-full h-full">Name</button></th>
+                        <th class="border" style="width: 200px;"><button wire:click="sortBy('category')" class="w-full h-full">Category</button></th>
                         <th class="border p-2">Description</th>
-                        <th class="border p-2 text-center" style="width: 100px;">Price</th>
-                        <th class="border p-2" style="width: 140px;"> <button wire:click="openModal('add', null)" type="button" class="addBtn text-white px-4 rounded">New item +</button></th>
+                        <th class="border text-center" style="width: 100px;"><button wire:click="sortBy('price')" class="w-full h-full">Price</button></th>
+                        <th class="border" style="width: 140px;"> <button wire:click="openModal('add', null)" type="button" class="addBtn text-white px-4 rounded">New item +</button></th>
                     </tr>
                 </thead>
 

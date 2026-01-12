@@ -30,7 +30,10 @@ class ItemManager extends Component
     //*-search for item list
     //*-make category a searchable within search
     //*-clear search button
-    //&-sortable columns
+    //^-sortable columns
+    //&-sort on category name
+    //&-visual helpers on sort to check if first-last last-first
+    //&-return to page 1 on create and edit
     //~===============================================================================================~//
 
     //^ Component properties ======================================================================== ^//
@@ -47,6 +50,9 @@ class ItemManager extends Component
     public $succesMsg = '';
     public $tstMsg = '';
     public $search = '';
+    public $sort = 'updated_at';
+    public $sortCount = 0;
+    public $sortDirection = 'desc';
 
     //^ Initialization logic ======================================================================== ^//
     //? initialize component state
@@ -64,10 +70,10 @@ class ItemManager extends Component
                         $q->where('name', 'like', '%' . $this->search . '%');
                     });
             })
-                ->orderBy('updated_at', 'desc')
+                ->orderBy($this->sort, $this->sortDirection)
                 ->paginate($this->perPage);
         } else {
-            $items = Item::orderBy('updated_at', 'desc')->paginate($this->perPage);
+            $items = Item::orderBy($this->sort, $this->sortDirection)->paginate($this->perPage);
         }
 
         //checks how many items there are within the table page (max 10) fills up any empty spot with a filler
@@ -80,6 +86,35 @@ class ItemManager extends Component
             'items' => $items,
             'categories' => Category::orderBy('name')->get(),
         ]);
+    }
+
+    //? column sorting logic
+    public function sortBy($value)
+    {
+        //if sorting by a new column, reset sort count, else increment sort count
+        if ($this->sort !== $value) {
+            $this->sort = $value;
+            $this->sortCount = 1;
+        } else {
+            $this->sortCount++;
+        }
+
+        //if sort is clicked once, set to ascending
+        if ($this->sortCount === 1) {
+            $this->sortDirection = 'asc';
+            return;
+        }
+
+        //if sort is clicked twice, set to descending
+        if ($this->sortCount === 2) {
+            $this->sortDirection = 'desc';
+            return;
+        }
+
+        //if sortCount is 3 or more, reset to default sort
+        $this->sort = 'updated_at';
+        $this->sortDirection = 'desc';
+        $this->sortCount = 0;
     }
 
     //^ Modal management ============================================================================ ^//
