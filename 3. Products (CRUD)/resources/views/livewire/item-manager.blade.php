@@ -86,7 +86,6 @@
     <!-- Table UI -->
     <div class="p-4 w-full">
         <h1 class="text-4xl font-bold mb-4">Item Manager</h1>
-        <p>{{ $sort }} {{ $sortCount }}</p>
         <div class="mb-6 w-full overflow-x-auto">
             <table class="border rounded-lg shadow-lg" style="width: 70%;"><!-- find a way to fix the tailwind width 70% error -->
                 <thead>
@@ -102,11 +101,11 @@
 
                     <!-- colum names and create controll -->
                     <tr class="bg-gray-500 text-white">
-                        <th class="border text-center" style="width: 50px;"><button wire:click="sortBy('id')" class="w-full h-full">ID {{ $sortIndicator['id'] ?? '' }}</button></th>
-                        <th class="border" style="width: 250px;"><button wire:click="sortBy('name')" class="w-full h-full">Name {{ $sortIndicator['name'] ?? '' }}</button></th>
-                        <th class="border" style="width: 200px;"><button wire:click="sortBy('category')" class="w-full h-full">Category {{ $sortIndicator['category'] ?? '' }}</button></th>
+                        <th class="border text-center" style="width: 50px;"><button wire:click="sortBy('id')" class="w-full h-full">ID {{ $sortIndicator['id'] ?? '-' }}</button></th>
+                        <th class="border" style="width: 250px;"><button wire:click="sortBy('name')" class="w-full h-full">Name {{ $sortIndicator['name'] ?? '-' }}</button></th>
+                        <th class="border" style="width: 200px;"><button wire:click="sortBy('category')" class="w-full h-full">Category {{ $sortIndicator['category'] ?? '-' }}</button></th>
                         <th class="border p-2">Description</th>
-                        <th class="border text-center" style="width: 100px;"><button wire:click="sortBy('price')" class="w-full h-full">Price {{ $sortIndicator['price'] ?? '' }}</button></th>
+                        <th class="border text-center" style="width: 100px;"><button wire:click="sortBy('price')" class="w-full h-full">Price {{ $sortIndicator['price'] ?? '-' }}</button></th>
                         <th class="border" style="width: 140px;"> <button wire:click="openModal('add', null)" type="button" class="addBtn text-white px-4 rounded">New item +</button></th>
                     </tr>
                 </thead>

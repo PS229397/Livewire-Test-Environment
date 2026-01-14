@@ -31,7 +31,7 @@ class ItemManager extends Component
     //*-make category a searchable within search
     //*-clear search button
     //* -sortable columns
-    //&-sort on category name
+    //*-sort on category name
     //*-visual helpers on sort to check if first-last last-first
     //&-return to page 1 on create and edit
     //~===============================================================================================~//
@@ -62,26 +62,37 @@ class ItemManager extends Component
     //? render the component view
     public function render()
     {
-        //checks the search input for value and queries the items accordingly, if no search value, returns all items
-        if ($this->search !== '') {
-            $items = Item::where(function ($query) {
-                $query->where('name', 'like', '%' . $this->search . '%')
-                    ->orWhere('description', 'like', '%' . $this->search . '%')
-                    ->orWhereHas('category', function ($q) {
-                        $q->where('name', 'like', '%' . $this->search . '%');
-                    });
-            })
-                ->orderBy($this->sort, $this->sortDirection)
-                ->paginate($this->perPage);
-        } else {
-            $items = Item::orderBy($this->sort, $this->sortDirection)->paginate($this->perPage);
+        $query = Item::query()
+            //leftjoin to make categories table searchable
+            ->leftJoin('categories', 'items.category_id', '=', 'categories.id')
+            ->select('items.*', 'categories.name as category_name')
+
+            //checks the search input for value and queries the items and categories if needed
+            ->when($this->search !== '', function ($q) {
+                $q->where(function ($q) {
+                    $q->where('items.name', 'like', "%{$this->search}%")
+                        ->orWhere('items.description', 'like', "%{$this->search}%")
+                        ->orWhere('categories.name', 'like', "%{$this->search}%");
+                });
+            });
+
+        //makes sure the first page is shown on search
+        if ($this->search != ''){
+            $this->setPage(1);
         }
 
-        //checks how many items there are within the table page (max 10) fills up any empty spot with a filler
-        $this->fillerRows = max(
-            0,
-            $this->perPage - $items->count()
-        );
+        //if selected sorting type is categories query the categories table, else query the items table using value stored in $sort
+        if ($this->sort === 'category') {
+            $query->orderBy('category_name', $this->sortDirection);
+        } else {
+            $query->orderBy("items.{$this->sort}", $this->sortDirection);
+        }
+
+        //sets $query results as the $item value and paginates the result
+        $items = $query->paginate($this->perPage);
+
+        //checks howmany items there are on the page and fills any unused space with a filler
+        $this->fillerRows = max(0, $this->perPage - $items->count());
 
         return view('livewire.item-manager', [
             'items' => $items,
@@ -149,6 +160,9 @@ class ItemManager extends Component
     //? column sorting logic
     public function sortBy($value)
     {
+        //makes sure the first page is selected on sort
+        $this->setPage(1);
+
         //if sorting by a new column, reset sort count and sort indictor, else increment sort count
         if ($this->sort !== $value) {
             $this->sortIndicator = [];
@@ -188,7 +202,7 @@ class ItemManager extends Component
 
         //creates a database item with the validated inputs
         Item::create($validated);
-        $this->resetPage();
+        $this->setPage(1);
 
         //closes modal and loads the list to reflect new data
         $this->closeModal();
@@ -217,6 +231,7 @@ class ItemManager extends Component
         //finds item by id and updates with validated inputs
         $item = Item::findOrFail($this->editingId);
         $item->update($validated);
+        $this->setPage(1);
 
         //resets editing id to null
         $this->editingId = null;
