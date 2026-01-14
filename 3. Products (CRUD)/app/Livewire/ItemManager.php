@@ -33,7 +33,7 @@ class ItemManager extends Component
     //* -sortable columns
     //*-sort on category name
     //*-visual helpers on sort to check if first-last last-first
-    //&-return to page 1 on create and edit
+    //*-return to page 1 on create and edit
     //~===============================================================================================~//
 
     //^ Component properties ======================================================================== ^//
@@ -54,11 +54,10 @@ class ItemManager extends Component
     public $sortCount = 0;
     public $sortDirection = 'desc';
     public $sortIndicator = [];
-
-    //^ Initialization logic ======================================================================== ^//
-    //? initialize component state
     use WithPagination;
 
+
+    //^ Initialization logic ======================================================================== ^//
     //? render the component view
     public function render()
     {
@@ -149,6 +148,7 @@ class ItemManager extends Component
     //? input validation logic
     public function validateInput()
     {
+        //make sure the name, category and price are not empty, description can be null
         return $this->validate([
             'name' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
@@ -212,10 +212,13 @@ class ItemManager extends Component
     //? edit an existing item on id
     public function editItem($id)
     {
+        //sets editing id to id givven by edit button
         $this->editingId = $id;
 
+        //recieves the given category from the db
         $item = Item::with('category')->findOrFail($id);
 
+        //populates edit modal with the selected item
         $this->name = $item->name;
         $this->category_id = $item->category_id;
         $this->description = $item->description;
@@ -255,7 +258,7 @@ class ItemManager extends Component
     }
 
     //^ Miscallaneous functions ====================================================================== ^//
-    //? success message logic
+    //? set success message
     public function successMsg($value)
     {
         $this->succesMsg = $value;

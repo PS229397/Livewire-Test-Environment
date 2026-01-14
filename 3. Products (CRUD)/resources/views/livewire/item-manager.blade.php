@@ -47,7 +47,7 @@
                 <div>
                     @error('price')<span class="text-red-500">{{ $message }}</span>@enderror
                     <label class="block mb-1">Price:</label>
-                    <input type="number" wire:model="price" step="0.05" class="p-2 border rounded w-full" />
+                    <input type="number" wire:model="price" step="0.01" class="p-2 border rounded w-full" />
                 </div>
 
                 <div class="space-x-2 mt-4 w-full flex justify-end">
