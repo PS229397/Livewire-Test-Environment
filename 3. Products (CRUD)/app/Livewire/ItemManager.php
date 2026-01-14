@@ -200,7 +200,7 @@ class ItemManager extends Component
         //call input validation
         $validated = $this->validateInput();
 
-        //creates a database item with the validated inputs
+        //creates a database item with the validated inputs, sets page to 1
         Item::create($validated);
         $this->setPage(1);
 
@@ -212,7 +212,7 @@ class ItemManager extends Component
     //? edit an existing item on id
     public function editItem($id)
     {
-        //sets editing id to id givven by edit button
+        //sets editing id to id given by edit button
         $this->editingId = $id;
 
         //recieves the given category from the db
