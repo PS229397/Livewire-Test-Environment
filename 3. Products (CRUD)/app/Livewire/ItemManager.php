@@ -36,6 +36,11 @@ class ItemManager extends Component
     //*-return to page 1 on create and edit
     //~===============================================================================================~//
 
+    //-separation of concerns->apparte trade"interacts with x"
+    //-factories for db seeder
+    //-types toevoegen aan functies
+    //-maintainability/best practises
+
     //^ Component properties ======================================================================== ^//
     public int $perPage = 10;
     public int $fillerRows = 0;
@@ -76,7 +81,7 @@ class ItemManager extends Component
             });
 
         //makes sure the first page is shown on search
-        if ($this->search != ''){
+        if (!empty($this->search)){
             $this->setPage(1);
         }
 
