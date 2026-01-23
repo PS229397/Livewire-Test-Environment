@@ -159,10 +159,10 @@ class ItemManager extends Component
     {
         //make sure the name, category and price are not empty, description can be null
         return $this->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:50',
             'category_id' => 'required|exists:categories,id',
             'description' => 'nullable|string|max:1000',
-            'price' => 'required|numeric|min:0|max:10000',
+            'price' => 'required|numeric|min:0.05|max:10000',
 
             'selectedTags' => ['array'],
             'selectedTags.*' => ['exists:tags,id'],
