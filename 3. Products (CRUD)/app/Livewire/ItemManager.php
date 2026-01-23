@@ -59,6 +59,8 @@ class ItemManager extends Component
     public $sortCount = 0;
     public $sortDirection = 'desc';
     public $sortIndicator = [];
+    public $allTags = [];
+    public $selectedTags = [];
     use WithPagination;
 
 
@@ -81,7 +83,7 @@ class ItemManager extends Component
             });
 
         //makes sure the first page is shown on search
-        if (!empty($this->search)){
+        if (!empty($this->search)) {
             $this->setPage(1);
         }
 
@@ -97,10 +99,12 @@ class ItemManager extends Component
 
         //checks howmany items there are on the page and fills any unused space with a filler
         $this->fillerRows = max(0, $this->perPage - $items->count());
+        $this->allTags = \App\Models\Tag::orderBy('name')->get();
 
         return view('livewire.item-manager', [
             'items' => $items,
             'categories' => Category::orderBy('name')->get(),
+            'tags' => \App\Models\Tag::orderBy('name')->get(),
         ]);
     }
 
@@ -144,7 +148,7 @@ class ItemManager extends Component
             $this->currentModal = '';
             $this->editingId = null;
             $this->deletingId = null;
-            $this->reset(['name', 'category_id', 'description', 'price']);
+            $this->reset(['name', 'category_id', 'description', 'price', 'selectedTags']);
             $this->resetErrorBag();
         }
     }
@@ -159,6 +163,9 @@ class ItemManager extends Component
             'category_id' => 'required|exists:categories,id',
             'description' => 'nullable|string|max:1000',
             'price' => 'required|numeric|min:0|max:10000',
+
+            'selectedTags' => ['array'],
+            'selectedTags.*' => ['exists:tags,id'],
         ]);
     }
 
@@ -206,8 +213,15 @@ class ItemManager extends Component
         $validated = $this->validateInput();
 
         //creates a database item with the validated inputs, sets page to 1
-        Item::create($validated);
+        $item = Item::create(
+            \Illuminate\Support\Arr::except($validated, ['selectedTags'])
+        );
         $this->setPage(1);
+
+        // attach tags
+        if (!empty($this->selectedTags)) {
+            $item->tags()->attach($this->selectedTags);
+        }
 
         //closes modal and loads the list to reflect new data
         $this->closeModal();
@@ -228,6 +242,7 @@ class ItemManager extends Component
         $this->category_id = $item->category_id;
         $this->description = $item->description;
         $this->price = $item->price;
+        $this->selectedTags = $item->tags()->pluck('tags.id')->toArray();
     }
 
     //? update edited item
@@ -239,6 +254,10 @@ class ItemManager extends Component
         //finds item by id and updates with validated inputs
         $item = Item::findOrFail($this->editingId);
         $item->update($validated);
+
+        // sync tags
+        $item->tags()->sync($this->selectedTags);
+
         $this->setPage(1);
 
         //resets editing id to null

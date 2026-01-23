@@ -8,6 +8,7 @@ class Tag extends Model
 {
     public function items()
     {
-        return $this->belongsToMany(Item::class);
+        return $this->belongsToMany(Tag::class)
+            ->orderBy('tags.name');
     }
 }

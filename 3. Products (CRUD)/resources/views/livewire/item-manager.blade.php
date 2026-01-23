@@ -45,6 +45,19 @@
                     <textarea wire:model="description" class="p-2 border rounded w-full"></textarea>
                 </div>
                 <div>
+                    @error('tags')<span class="text-red-500">{{ $message }}</span>@enderror
+                    <label class="block mb-1">Tags:</label>
+                    @foreach ($allTags as $tag)
+                    <label class="flex items-center gap-2">
+                        <input
+                            type="checkbox"
+                            value="{{ $tag->id }}"
+                            wire:model="selectedTags">
+                        {{ $tag->name }}
+                    </label>
+                    @endforeach
+                </div>
+                <div>
                     @error('price')<span class="text-red-500">{{ $message }}</span>@enderror
                     <label class="block mb-1">Price:</label>
                     <input type="number" wire:model="price" step="0.01" class="p-2 border rounded w-full" />
@@ -87,11 +100,11 @@
     <div class="p-4 w-full">
         <h1 class="text-4xl font-bold mb-4">Item Manager</h1>
         <div class="mb-6 w-full overflow-x-auto">
-            <table class="border rounded-lg shadow-lg" style="width: 70%;"><!-- find a way to fix the tailwind width 70% error -->
+            <table class="border rounded-lg shadow-lg" style="width: 80%;"><!-- find a way to fix the tailwind width 70% error -->
                 <thead>
                     <!-- searchbar ui -->
                     <tr class="bg-gray-500">
-                        <td colspan="5" class="p-2">
+                        <td colspan="6" class="p-2">
                             <input wire:model.live="search" type="text" placeholder="search..." class="px-2 rounded w-full" />
                         </td>
                         <td colspan="1" class="p-2 flex justify-end">
@@ -105,6 +118,7 @@
                         <th class="border" style="width: 250px;"><button wire:click="sortBy('name')" class="w-full h-full">Name {{ $sortIndicator['name'] ?? '-' }}</button></th>
                         <th class="border" style="width: 200px;"><button wire:click="sortBy('category')" class="w-full h-full">Category {{ $sortIndicator['category'] ?? '-' }}</button></th>
                         <th class="border p-2">Description</th>
+                        <th class="border p-2" style="width: 350px;">Tags</th>
                         <th class="border text-center" style="width: 100px;"><button wire:click="sortBy('price')" class="w-full h-full">Price {{ $sortIndicator['price'] ?? '-' }}</button></th>
                         <th class="border" style="width: 140px;"> <button wire:click="openModal('add', null)" type="button" class="addBtn text-white px-4 rounded">New item +</button></th>
                     </tr>
@@ -119,6 +133,16 @@
                         <td class="border p-2">{{ $item->name }}</td>
                         <td class="border p-2">{{ $item->category->name }}</td>
                         <td class="border p-2">{{ $item->description }}</td>
+                        <td class="border p-2">
+                            <div class="flex flex-wrap gap-2">
+                                @foreach ($item->tags as $tag)
+                                <div class="tag-badge">
+                                    <span class="tag-hole"></span>
+                                    {{ $tag->name }}
+                                </div>
+                                @endforeach
+                            </div>
+                        </td>
                         <td class="border p-2">€{{ $item->price }}</td>
                         <td class="border p-2">
                             <button wire:click="openModal('edit', {{ $item->id }})"
@@ -135,7 +159,7 @@
                     <!-- if list empty let the user know in the ui -->
                     @empty
                     <tr>
-                        <td colspan="6" class="border p-2 text-center bg-gray-200">
+                        <td colspan="7" class="border p-2 text-center bg-gray-200">
                             No items yet.
                         </td>
                     </tr>
@@ -150,12 +174,13 @@
                         <td class="border p-2">&nbsp;</td>
                         <td class="border p-2">&nbsp;</td>
                         <td class="border p-2">&nbsp;</td>
+                        <td class="border p-2">&nbsp;</td>
                         </tr>
                         @endfor
 
                         <!-- page controlls -->
                         <tr>
-                            <td colspan="6" class="border p-2 text-center bg-gray-200">
+                            <td colspan="7" class="border p-2 text-center bg-gray-200">
                                 {{ $items->links() }}
                             </td>
                         </tr>

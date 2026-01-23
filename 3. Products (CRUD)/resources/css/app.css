@@ -4,10 +4,25 @@
 
 @layer utilities {
     @keyframes slide-down {
-        0% { transform: translateY(-120%); opacity: 0; }
-        20% { transform: translateY(0); opacity: 1; }
-        80% { transform: translateY(0); opacity: 1; }
-        100% { transform: translateY(-120%); opacity: 0; }
+        0% {
+            transform: translateY(-120%);
+            opacity: 0;
+        }
+
+        20% {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        80% {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        100% {
+            transform: translateY(-120%);
+            opacity: 0;
+        }
     }
 
     .animate-slide-down {
@@ -15,34 +30,87 @@
     }
 }
 
-.addBtn{
+.tag-badge {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+
+    padding: 4px 14px 4px 28px;
+
+    font-size: 12px;
+    font-weight: 500;
+    height: 24px;
+    line-height: 1;
+
+    color: #000;
+
+    /* background layer */
+    background: #e5e5e5;
+
+    /* create shape */
+    clip-path: polygon(14px 0%,
+            100% 0%,
+            100% 100%,
+            14px 100%,
+            0% 50%);
+}
+
+/* border layer */
+.tag-badge::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+
+    background: white;
+
+    z-index: -1;
+
+    clip-path: polygon(15px 0%,
+            100% 0%,
+            100% 100%,
+            15px 100%,
+            0% 50%);
+}
+
+.tag-hole {
+    position: absolute;
+    left: 8px;
+    width: 8px;
+    height: 8px;
+
+    background: transparent;
+    border: #000 1px solid;
+    border-radius: 50%;
+}
+
+.addBtn {
     @apply bg-green-500;
 }
 
-.addBtn:hover{
+.addBtn:hover {
     @apply bg-green-600 shadow-lg;
 }
 
-.editBtn{
+.editBtn {
     @apply bg-blue-500;
 }
 
-.editBtn:hover{
+.editBtn:hover {
     @apply bg-blue-600 shadow-lg;
 }
 
-.deleteBtn{
+.deleteBtn {
     @apply bg-red-500;
 }
 
-.deleteBtn:hover{
+.deleteBtn:hover {
     @apply bg-red-600 shadow-lg;
 }
 
-.cancelBtn{
+.cancelBtn {
     @apply bg-gray-200 border border-black;
 }
 
-.cancelBtn:hover{
+.cancelBtn:hover {
     @apply bg-gray-500 shadow-lg text-white;
 }
